@@ -1,3 +1,5 @@
+//JS FILE FOR CUSTOMIZATION
+
 let placeHolder;
 
 
@@ -10,5 +12,5 @@ function setup() {
 }
 
 function draw() {
-    
+
 }
