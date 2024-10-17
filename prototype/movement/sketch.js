@@ -6,24 +6,23 @@ function setup() {
     createCanvas(400, 400);
     perlinGraphics = createGraphics(1600, 1600); // create scrolling perlin noise canvas 
     watergraphics = createGraphics(2000, 2000); // create water border
+    watergraphics.fill(128, 130, 250); // water border color
+    watergraphics.rect(0, 0, 2000, 2000); // fill it with water
+    image(watergraphics, 0, 0); // show water border
     
     // start the player in the center of the perlinGraphics
     scrollX = (perlinGraphics.width - width) / 2 + 10;
     scrollY = (perlinGraphics.height - height) / 2 + 10;
 
     perlinBG(); // make the perling back ground
-}
-
-function draw() {
-    background(220);
-    watergraphics.fill(128, 130, 250); // water border color
-    watergraphics.rect(0, 0, 2000, 2000); // fill it with water
-    image(watergraphics, 0, 0); // show water border
-    
-    // show the perling landscape based on scroll position
     perlinGraphics.fill(0);
     // create a starting black 3x3 for player spawn
     perlinGraphics.rect(perlinGraphics.width / 2 - tileSize, perlinGraphics.height / 2 - tileSize, tileSize * 3, tileSize * 3);
+}
+
+function draw() {
+    console.log(frameRate())
+    background(220);
     // display perlin background
     image(perlinGraphics, -scrollX, -scrollY);
     // player (red square for now)
