@@ -33,7 +33,10 @@ let weaponArea;
 let bootsArea;
 
 function preload() {
-
+    hats = [
+        {"img": loadImage("./images/Hats/tophat.png"), "name": "Top Hat"},
+        {"img": loadImage("./images/Hats/purple hat.jpg"), "name": "Purple Hat"}
+    ];
 }
 
 function setup() {
@@ -56,7 +59,7 @@ function draw() {
         box.display();
     }
 
-    displayItems(selectedCategory, width/4 * 3, height/2);
+    displayItems(selectedCategory, width/4 * 3, height/6);
 }
 
 //temp function for visual indication
@@ -82,16 +85,20 @@ function clickZones() {
 
 //detect when player is clicking on the char
 function mousePressed() {
+    fill(90, 105, 96);
+    rect(width/4 * 3, height/4, 200, 400);
+
     for (let box of clickBoxes) {
         box.checkClick();
     }
 
-    for (let i = 0; i < itemPositions.length; i++) {
+    displayItems(selectedCategory);
+    /*for (let i = 0; i < itemPositions.length; i++) {
         let item = itemPositions[i];
         if (mouseX > item.x && mouseX < item.x + 50 && mouseY > item.y && mouseY < item.y + 50) {
             equipItem(selectedCategory, item.img);
         }
-    }
+    } */
 
 }
 
@@ -120,20 +127,19 @@ function displayItems(items, x, y) {
    //iterate through all the imgs in the arr and display
     itemPositions = [];
     for (let i = 0; i < arr.length; i++) {
-        let img = arr[i];
-        fill(200);
-        rect(x, y + i * 60, 50, 50); //placeholder
+        let img = arr[i].img;
+        image(img, x, y + i * 60, 50, 50);
         fill(0);
-        text(img, x, y + i * 60 + 30); //label
+       text(arr[i].name, x-50, y + i * 60 + 30); //label
 
         itemPositions.push({ x: x, y: y + i * 60, img: img });
     }
 
     //placeholder code
     fill(200);
-     rect(x, y, 150, 50); //placeholder image
+    // rect(x, y, 150, 50); //placeholder image
      fill(0);
-    text("Displaying " + items, x, y + 10);
+    text("Displaying " + items, x, y-20);
 }
 
 //class for the clicking zones
@@ -164,30 +170,3 @@ class ClickAreas {
     }
 }
 
-
-function equipItem(category, img) {
-    switch (category) {
-        case "hats":
-            character.hat = img;
-            break;
-        case "armor":
-            character.armor = img;
-            break;
-        case "boots":
-            character.boots = img;
-            break;
-        case "weapons":
-            character.weapon = img;
-            break;
-    }
-}
-
-function displayEquippedItems() {
-    textSize(12);
-    fill(0);
-    text("Equipped Items:", width / 4, 20);
-    text("Hat: " + character.hat, width / 4, 40);
-    text("Armor: " + character.armor, width / 4, 60);
-    text("Weapon: " + character.weapon, width / 4, 80);
-    text("Boots: " + character.boots, width / 4, 100);
-}
