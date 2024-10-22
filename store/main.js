@@ -32,6 +32,8 @@ let armorArea;
 let weaponArea;
 let bootsArea;
 
+let selectedImg;
+
 function preload() {
     hats = [
         {"img": loadImage("./images/Hats/tophat.png"), "name": "Top Hat"},
@@ -57,9 +59,9 @@ function draw() {
 
     for (let box of clickBoxes) {
         box.display();
+        box.UpdateImage();
     }
-
-    displayItems(selectedCategory, width/4 * 3, height/6);
+    
 }
 
 //temp function for visual indication
@@ -92,14 +94,18 @@ function mousePressed() {
         box.checkClick();
     }
 
-    displayItems(selectedCategory);
-    /*for (let i = 0; i < itemPositions.length; i++) {
-        let item = itemPositions[i];
-        if (mouseX > item.x && mouseX < item.x + 50 && mouseY > item.y && mouseY < item.y + 50) {
-            equipItem(selectedCategory, item.img);
-        }
-    } */
+    itemPositions = [];
+    selectedImg = null;
+    displayItems(selectedCategory, width/4 * 3, height/6);
 
+    for (let itemPos of itemPositions) {
+        if (itemPos.x + 50 > mouseX && mouseX > itemPos.x && mouseY > itemPos.y && mouseY < itemPos.y + 50) {
+            console.log("item selected " + itemPos.name);
+            selectedImg = itemPos.img;
+        }
+    }
+    
+    console.log(itemPositions);
 }
 
 //use this function to display all the available choices
@@ -123,16 +129,19 @@ function displayItems(items, x, y) {
             arr = weapons;
         break;
     }
+
+    let maxLength = arr.length;
+    imageMode(CORNER);
+
    //when the arrays are populated, this function will
    //iterate through all the imgs in the arr and display
-    itemPositions = [];
-    for (let i = 0; i < arr.length; i++) {
+    for (let i = 0; i < maxLength; i++) {
         let img = arr[i].img;
         image(img, x, y + i * 60, 50, 50);
         fill(0);
-       text(arr[i].name, x-50, y + i * 60 + 30); //label
+        text(arr[i].name, x-50, y + i * 60 + 30); //label
 
-        itemPositions.push({ x: x, y: y + i * 60, img: img });
+        itemPositions.push({ "x": x, "y": y + i * 60, "img": img, "name": arr[i].name });
     }
 
     //placeholder code
@@ -149,6 +158,7 @@ class ClickAreas {
         this.y = y;
         this.width = 100;
         this.type = type;
+        this.img = null;
         if (this.type == "armor") {
             this.height = 100;
         } else {
@@ -165,8 +175,21 @@ class ClickAreas {
 
     display() {
         //draw the selected item on this zone
-        fill(255, 0, 0);
-        rect(this.x, this.y, 10);
+        if (this.img != null) {
+            imageMode(CENTER);
+            image(this.img, this.x, this.y, 50, 50);
+        } else {
+            fill(255, 255, 255);
+            rect(this.x, this.y, 10);
+        }
+    }
+
+    UpdateImage() {
+        if (this.type == selectedCategory) {
+            this.img = selectedImg;
+        }
+
+        //store it locally to prevent it from being removed
     }
 }
 
