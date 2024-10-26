@@ -66,6 +66,11 @@ function preload() {
         {"img": loadImage("./images/Boots/boots1.jpg"), "name": "Leather Boots", "path": "./images/Boots/boots1.jpg"},
         {"img": loadImage("./images/Boots/boots2.png"), "name": "Jetpack Boots", "path": "./images/Boots/boots2.png"}
     ];
+
+    //check if currency value already exists, else create new var
+    if (localStorage.getItem("currency") == null) {
+        localStorage.setItem("currency", 0);    
+    } 
 }
 
 function setup() {
@@ -83,12 +88,7 @@ function setup() {
     //add all to array for management
     clickBoxes.push(hatArea, armorArea, bootsArea, weaponArea);
 
-    //check if currency value already exists, else create new var
-    if (localStorage.getItem("currency") == null) {
-        currency = localStorage.setItem("currency", 0);
-    } else {
-        currency = localStorage.getItem("currency");
-    }
+    currency = localStorage.getItem("currency");
 
 }
 
@@ -104,6 +104,7 @@ function draw() {
     }
     
     textSize(30);
+    fill(255, 255, 255);
     text("Money: $" + currency, 500, 300);
 
 }
