@@ -72,6 +72,7 @@ function setup() {
     createCanvas(600, 400);
     background(90, 105, 96);
 
+    //show char data in console
     console.log(characterData);
 
     //new click zones to track what player is looking at
@@ -82,11 +83,18 @@ function setup() {
     //add all to array for management
     clickBoxes.push(hatArea, armorArea, bootsArea, weaponArea);
 
+    //check if currency value already exists, else create new var
+    if (localStorage.getItem("currency") == null) {
+        currency = localStorage.setItem("currency", 0);
+    } else {
+        currency = localStorage.getItem("currency");
+    }
 
 }
 
 function draw() {
 
+    textSize(15);
     //placeholder visual for seeing click areas
     clickZones();
 
@@ -95,6 +103,9 @@ function draw() {
         box.UpdateImage();
     }
     
+    textSize(30);
+    text("Money: $" + currency, 500, 300);
+
 }
 
 //temp function for visual indication
@@ -175,6 +186,7 @@ function displayItems(items, x, y) {
         let img = arr[i].img;
         image(img, x, y + i * 60, 50, 50);
         fill(0);
+        textSize(12);
         text(arr[i].name, x-50, y + i * 60 + 30); //label
 
         itemPositions.push({ "x": x, "y": y + i * 60, "img": img, "name": arr[i].name, "path": arr[i].path });
