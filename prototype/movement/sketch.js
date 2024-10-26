@@ -117,7 +117,7 @@ class Bullet {
 
 
 function keyPressed() {
-    if (key == "I") {
-        autoFire *= -1;
+    if (key == "I" || key == "i") {
+        autoFire *= -1
     }
 }
