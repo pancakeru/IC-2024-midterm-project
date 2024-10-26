@@ -13,13 +13,18 @@ let weapons = []; //probably come built in with abilities
 let boots = [];
 
 //object to store character data
-//placeholder values atm
-let character = {
-    "hat": "hat.png",
-    "armor": "armor.png",
-    "weapon": "weapon.png",
-    "boots": "boots.png",
-    abilities: ["fireball"]
+let characterData = LoadCharData();
+
+if (!characterData) {
+    characterData = {
+        hats: null,
+        armor: null,
+        weapons: null,
+        boots: null,
+        abilities: [null]
+    };
+
+    SaveCharData(characterData);
 }
 
 let itemPositions = [];
@@ -32,23 +37,34 @@ let armorArea;
 let weaponArea;
 let bootsArea;
 
+//var to temp store what the selected img is
 let selectedImg;
+let selectedPath;
+
+//var to ref local currency amt
+let currency;
 
 function preload() {
     hats = [
-        {"img": loadImage("./images/Hats/tophat.png"), "name": "Top Hat"},
-        {"img": loadImage("./images/Hats/purple hat.jpg"), "name": "Purple Hat"}
+        {"img": loadImage("./images/Hats/tophat.png"), "name": "Top Hat", "path": "./images/Hats/tophat.png"},
+        {"img": loadImage("./images/Hats/purple hat.jpg"), "name": "Purple Hat", "path": "./images/Hats/purple hat.jpg"}
     ];
 }
 
 function setup() {
     createCanvas(600, 400);
     background(90, 105, 96);
+
+    console.log(characterData);
+
+    //new click zones to track what player is looking at
     hatArea = new ClickAreas(width/4, height/2 - 150, "hats");
     armorArea = new ClickAreas(width/4, height/2 + 80, "boots");
     bootsArea = new ClickAreas(width/4, height/2 - 50, "armor");
     weaponArea = new ClickAreas(width/4 + 70, height/2 +10, "weapons");
+    //add all to array for management
     clickBoxes.push(hatArea, armorArea, bootsArea, weaponArea);
+
 
 }
 
@@ -94,18 +110,21 @@ function mousePressed() {
         box.checkClick();
     }
 
+    //check for player clicking on items
     itemPositions = [];
     selectedImg = null;
+    selectedPath = null
     displayItems(selectedCategory, width/4 * 3, height/6);
 
     for (let itemPos of itemPositions) {
         if (itemPos.x + 50 > mouseX && mouseX > itemPos.x && mouseY > itemPos.y && mouseY < itemPos.y + 50) {
-            console.log("item selected " + itemPos.name);
+           // console.log("item selected " + itemPos.name);
             selectedImg = itemPos.img;
+            selectedPath = itemPos.path;
         }
     }
     
-    console.log(itemPositions);
+   // console.log(itemPositions);
 }
 
 //use this function to display all the available choices
@@ -141,7 +160,7 @@ function displayItems(items, x, y) {
         fill(0);
         text(arr[i].name, x-50, y + i * 60 + 30); //label
 
-        itemPositions.push({ "x": x, "y": y + i * 60, "img": img, "name": arr[i].name });
+        itemPositions.push({ "x": x, "y": y + i * 60, "img": img, "name": arr[i].name, "path": arr[i].path });
     }
 
     //placeholder code
@@ -158,12 +177,20 @@ class ClickAreas {
         this.y = y;
         this.width = 100;
         this.type = type;
-        this.img = null;
+
         if (this.type == "armor") {
             this.height = 100;
         } else {
             this.height = 50;
         }
+
+        //load the image path from local storage
+        if (characterData[this.type] != null) {
+            this.img = loadImage(characterData[this.type]);
+        } else {
+            this.img = null;
+        }
+
     }
 
     checkClick() {
@@ -185,11 +212,23 @@ class ClickAreas {
     }
 
     UpdateImage() {
-        if (this.type == selectedCategory) {
+        if (this.type == selectedCategory && itemPositions.length > 0 && selectedImg != null) {
             this.img = selectedImg;
+            //store it locally to prevent it from being removed
+            equipItem(this.type, selectedPath);
         }
-
-        //store it locally to prevent it from being removed
     }
 }
 
+//function for assigning val to local storage
+function equipItem(category, item) {
+
+   // console.log(item);
+
+        //store the image path
+        characterData[category] = item;
+
+    // Save updated character data
+    SaveCharData(characterData);
+    //console.log(characterData[category]);
+}
