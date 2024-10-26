@@ -5,6 +5,7 @@ let tileSize = 20;
 let bullets = []
 let frameDelay = 0;
 let fireSpeed = 5;
+let autoFire = -1;
 function setup() {
     createCanvas(400, 400);
     perlinGraphics = createGraphics(1600, 1600); // create scrolling perlin noise canvas 
@@ -32,7 +33,7 @@ function draw() {
     // put in center of screen
     rect(width / 2 - 10, height / 2 - 10, 20, 20);
     frameDelay++;
-    if (mouseIsPressed) {
+    if (mouseIsPressed || autoFire == 1) {
         if (frameDelay > 60 / fireSpeed) {
             bullets.push(new Bullet())
             frameDelay = 0
@@ -111,5 +112,12 @@ class Bullet {
         this.bulletPos.add(this.mouseDir)
         this.x = this.bulletPos.x;
         this.y = this.bulletPos.y;
+    }
+}
+
+
+function keyPressed() {
+    if (key == "I") {
+        autoFire *= -1;
     }
 }
