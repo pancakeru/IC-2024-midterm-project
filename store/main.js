@@ -45,9 +45,26 @@ let selectedPath;
 let currency;
 
 function preload() {
+
+    //ALL PLACEHOLDER ITEMS IN ARRAY FOR NOW 
     hats = [
         {"img": loadImage("./images/Hats/tophat.png"), "name": "Top Hat", "path": "./images/Hats/tophat.png"},
         {"img": loadImage("./images/Hats/purple hat.jpg"), "name": "Purple Hat", "path": "./images/Hats/purple hat.jpg"}
+    ];
+
+    armor = [
+        {"img": loadImage("./images/Armor/chestplate1.png"), "name": "Steel Chestplate", "path": "./images/Armor/chestplate1.png"},
+        {"img": loadImage("./images/Armor/chestplate2.png"), "name": "Diamond Armor", "path": "./images/Armor/chestplate2.png"}
+    ];
+
+    weapons = [
+        {"img": loadImage("./images/Weapons/gun1.png"), "name": "Black Gun", "path": "./images/Weapons/gun1.png"},
+        {"img": loadImage("./images/Weapons/sword.png"), "name": "Gold Sword", "path": "./images/Weapons/sword.png"}
+    ];
+
+    boots = [
+        {"img": loadImage("./images/Boots/boots1.jpg"), "name": "Leather Boots", "path": "./images/Boots/boots1.jpg"},
+        {"img": loadImage("./images/Boots/boots2.png"), "name": "Jetpack Boots", "path": "./images/Boots/boots2.png"}
     ];
 }
 
