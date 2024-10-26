@@ -42,6 +42,13 @@ function draw() {
     for (let i = 0; i < bullets.length; i++) {
         bullets[i].display()
     }
+    for (let i = bullets.length - 1; i >= 0; i--) {
+        bullets[i].display();
+        if (bullets[i].x < 0 || bullets[i].x > perlinGraphics.width ||
+            bullets[i].y < 0 || bullets[i].y > perlinGraphics.height) {
+            bullets.splice(i, 1);
+        }
+    }
     // essentially the player move function
     updateScroll();
 }
