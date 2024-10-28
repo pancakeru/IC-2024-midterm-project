@@ -44,6 +44,12 @@ let selectedPath;
 //var to ref local currency amt
 let currency;
 
+//ref to html element in aprent doc
+const storeDisplay = parent.document.querySelector("#store");
+
+//placeholder guy image
+let guy;
+
 function preload() {
 
     //ALL PLACEHOLDER ITEMS IN ARRAY FOR NOW 
@@ -71,20 +77,22 @@ function preload() {
     if (localStorage.getItem("currency") == null) {
         localStorage.setItem("currency", 0);    
     } 
+
+    guy = loadImage("./images/sodlldd.jpg");
 }
 
 function setup() {
-    createCanvas(600, 400);
+    createCanvas(600, 600);
     background(90, 105, 96);
 
     //show char data in console
-    console.log(characterData);
+  //  console.log(storeDisplay);
 
     //new click zones to track what player is looking at
-    hatArea = new ClickAreas(width/4, height/2 - 150, "hats");
-    armorArea = new ClickAreas(width/4, height/2 + 80, "boots");
-    bootsArea = new ClickAreas(width/4, height/2 - 50, "armor");
-    weaponArea = new ClickAreas(width/4 + 70, height/2 +10, "weapons");
+    hatArea = new ClickAreas(width/2.4, height/2.7 - 160, "hats");
+    armorArea = new ClickAreas(width/2.4, height/2.7 + 300, "boots");
+    bootsArea = new ClickAreas(width/2.4, height/2.7 + 40, "armor");
+    weaponArea = new ClickAreas(width/1.5, height/2.7, "weapons");
     //add all to array for management
     clickBoxes.push(hatArea, armorArea, bootsArea, weaponArea);
 
@@ -93,6 +101,10 @@ function setup() {
 }
 
 function draw() {
+    background(90, 105, 96);
+
+    imageMode(CORNER);
+    image(guy, 0, height/15, 500, 500);
 
     textSize(15);
     //placeholder visual for seeing click areas
@@ -122,12 +134,6 @@ function clickZones() {
     rect(width/4, height/2 - 50, 100, 100); //armor
     rect(width/4 + 70, height/2 + 10, 100, 50); //weapon
 
-    //labels for clarification
-    fill(0);
-    text("Hat", width/4 - 20, height/2 - 160);
-    text("Armor", width/4 - 20, height/2 - 60);
-    text("Weapon", width/4 + 50, height/2 + 20);
-    text("Boots", width/4 - 20, height/2 + 90);
 }
 
 //detect when player is clicking on the char
@@ -156,6 +162,13 @@ function mousePressed() {
    // console.log(itemPositions);
 }
 
+
+function toTitleCase(str) {
+    return str.toLowerCase().split(' ').map(word => 
+        word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
+}
+
 //use this function to display all the available choices
 //from selectedCategory
 function displayItems(items, x, y) {
@@ -178,6 +191,8 @@ function displayItems(items, x, y) {
         break;
     }
 
+    storeDisplay.innerHTML = `<p id="store-header">${toTitleCase(items)}</p>`;
+
     let maxLength = arr.length;
     imageMode(CORNER);
 
@@ -185,19 +200,15 @@ function displayItems(items, x, y) {
    //iterate through all the imgs in the arr and display
     for (let i = 0; i < maxLength; i++) {
         let img = arr[i].img;
-        image(img, x, y + i * 60, 50, 50);
-        fill(0);
-        textSize(12);
-        text(arr[i].name, x-50, y + i * 60 + 30); //label
+
+        storeDisplay.innerHTML = storeDisplay.innerHTML + 
+        `<div class="store-item" onClick="CallItem('${arr[i].path}')"> 
+            <img src= "${arr[i].path}" width="70" height="70"> 
+            <p> ${arr[i].name} </p>
+        </div>`;
 
         itemPositions.push({ "x": x, "y": y + i * 60, "img": img, "name": arr[i].name, "path": arr[i].path });
     }
-
-    //placeholder code
-    fill(200);
-    // rect(x, y, 150, 50); //placeholder image
-     fill(0);
-    text("Displaying " + items, x, y-20);
 }
 
 //class for the clicking zones
@@ -234,7 +245,7 @@ class ClickAreas {
         //draw the selected item on this zone
         if (this.img != null) {
             imageMode(CENTER);
-            image(this.img, this.x, this.y, 50, 50);
+            image(this.img, this.x, this.y, 100, 100);
         } else {
             fill(255, 255, 255);
             rect(this.x, this.y, 10);
@@ -262,3 +273,15 @@ function equipItem(category, item) {
     SaveCharData(characterData);
     //console.log(characterData[category]);
 }
+
+function itemSelected(path) {
+  selectedPath = path;
+    selectedImg = loadImage(path);
+
+}
+
+function setSelectedPath() {
+
+}
+
+window.itemSelected = itemSelected;
