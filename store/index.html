@@ -11,11 +11,26 @@
     <h1>This is the Customization Page</h1>
     <p>Click on different sections of the character to purchase gear for the upcoming fight. <br>When ready, press the button to start combat.</p>
 
+<div id="container">
     <div id="game">
-        <iframe src="storesketch.html" scrolling="no"></iframe>
+        <iframe id="gameframe" src="storesketch.html" scrolling="no"></iframe>
 
     </div>
 
+    <div id="store">
+
+    </div>
+</div>
+
     <button id="ready" onclick="window.location.href='../maingame/index.html'">Ready for Combat</button>
+
+
+    <script>
+        const iFrameRef = document.getElementById("gameframe");
+
+        function CallItem(path) {
+            iFrameRef.contentWindow.itemSelected(path);
+        }
+    </script>
 
 </body>
