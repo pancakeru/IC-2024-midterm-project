@@ -1,287 +1,289 @@
-//JS FILE FOR CUSTOMIZATION
-
-/* 
-The idea is the character is displayed on the left while the store is 
-displayed on the right. Players can click on diff parts of the char
-to see what they can equip and buy for that type of item.
-*/
-
-//arrays to store purchasable items
+let spriteSheet;
+let itemWidth = 64;
+let itemHeight = 64;
+// Arrays to store categorized items
 let hats = [];
 let armor = [];
-let weapons = []; //probably come built in with abilities
+let weaponsArr = [];
+let weapons = [];
 let boots = [];
+let gloves = [];
+let inventory=[]
+let stats = {
+    stealth: 0,      // Initial stealth level
+    defense: 0,      // Initial defense level
+    shootingSpeed: 0, // Initial shooting speed level
+    speed: 0         // Initial speed level
+  };
+  
 
-//object to store character data
-let characterData = LoadCharData();
-
-if (!characterData) {
-    characterData = {
-        hats: null,
-        armor: null,
-        weapons: null,
-        boots: null,
-        abilities: [null]
-    };
-
-    SaveCharData(characterData);
-}
-
-let itemPositions = [];
-
-//vars for tracking what the player has clicked
+// Variables for tracking the selected category
 let selectedCategory = "hats";
-let clickBoxes = [];
-let hatArea;
-let armorArea;
-let weaponArea;
-let bootsArea;
-
-//var to temp store what the selected img is
-let selectedImg;
-let selectedPath;
-
-//var to ref local currency amt
 let currency;
 
-//ref to html element in aprent doc
-const storeDisplay = parent.document.querySelector("#store");
-
-//placeholder guy image
-let guy;
-
 function preload() {
+  spriteSheet = loadImage("./images/armour.png");
+  weaponsArr[0]= loadImage("./images/weapons/AK_full.png");
+  weaponsArr[1]= loadImage("./images/weapons/Assault rifle_full.png");
+  weaponsArr[2]= loadImage("./images/weapons/pistol_full.png");
+  weaponsArr[3]= loadImage("./images/weapons/Shootgun_full.png");
+  weaponsArr[4]= loadImage("./images/weapons/USI_full.png");
+  if (localStorage.getItem("currency") == null) {
+    localStorage.setItem("currency", 500);
+  }
 
-    //ALL PLACEHOLDER ITEMS IN ARRAY FOR NOW 
-    hats = [
-        {"img": loadImage("./images/Hats/tophat.png"), "name": "Top Hat", "path": "./images/Hats/tophat.png"},
-        {"img": loadImage("./images/Hats/purple hat.jpg"), "name": "Purple Hat", "path": "./images/Hats/purple hat.jpg"}
-    ];
-
-    armor = [
-        {"img": loadImage("./images/Armor/chestplate1.png"), "name": "Steel Chestplate", "path": "./images/Armor/chestplate1.png"},
-        {"img": loadImage("./images/Armor/chestplate2.png"), "name": "Diamond Armor", "path": "./images/Armor/chestplate2.png"}
-    ];
-
-    weapons = [
-        {"img": loadImage("./images/Weapons/gun1.png"), "name": "Black Gun", "path": "./images/Weapons/gun1.png"},
-        {"img": loadImage("./images/Weapons/sword.png"), "name": "Gold Sword", "path": "./images/Weapons/sword.png"}
-    ];
-
-    boots = [
-        {"img": loadImage("./images/Boots/boots1.jpg"), "name": "Leather Boots", "path": "./images/Boots/boots1.jpg"},
-        {"img": loadImage("./images/Boots/boots2.png"), "name": "Jetpack Boots", "path": "./images/Boots/boots2.png"}
-    ];
-
-    //check if currency value already exists, else create new var
-    if (localStorage.getItem("currency") == null) {
-        localStorage.setItem("currency", 0);    
-    } 
-
-    guy = loadImage("./images/sodlldd.jpg");
 }
 
 function setup() {
-    createCanvas(600, 600);
-    background(90, 105, 96);
+  createCanvas(windowWidth / 2, windowHeight / 2);
+  currency = localStorage.getItem("currency");
 
-    //show char data in console
-  //  console.log(storeDisplay);
+  loadItemsFromSpriteSheet();
 
-    //new click zones to track what player is looking at
-    hatArea = new ClickAreas(width/2.4, height/2.7 - 160, "hats");
-    armorArea = new ClickAreas(width/2.4, height/2.7 + 300, "boots");
-    bootsArea = new ClickAreas(width/2.4, height/2.7 + 40, "armor");
-    weaponArea = new ClickAreas(width/1.5, height/2.7, "weapons");
-    //add all to array for management
-    clickBoxes.push(hatArea, armorArea, bootsArea, weaponArea);
+  // Select elements
+  const itemsContainer = document.getElementById("itemsContainer");
+  const categoryNameDisplay = document.getElementById("categoryName");
 
-    currency = localStorage.getItem("currency");
-
+  if (itemsContainer && categoryNameDisplay) {
+    displayStore(); // Display initial items
+    displayNavigationArrows();
+  } else {
+    console.error("Error: Required DOM elements not found.");
+  }
+  currency = localStorage.getItem("currency");
 }
 
 function draw() {
-    background(90, 105, 96);
-
-    imageMode(CORNER);
-    image(guy, 0, height/15, 500, 500);
-
-    textSize(15);
-    //placeholder visual for seeing click areas
-    clickZones();
-
-    for (let box of clickBoxes) {
-        box.display();
-        box.UpdateImage();
-    }
-    
-    textSize(30);
-    fill(255, 255, 255);
-    text("Money: $" + currency, 500, 300);
-
-}
-
-//temp function for visual indication
-function clickZones() {
-    fill(255, 255, 255, 50);
-    noStroke();
-    textAlign(CENTER);
-    rectMode(CENTER);
-    
-    //drawing the estimated area
-    rect(width/4, height/2 - 150, 100, 50); //hat
-    rect(width/4, height/2 + 80, 100, 50); //boots
-    rect(width/4, height/2 - 50, 100, 100); //armor
-    rect(width/4 + 70, height/2 + 10, 100, 50); //weapon
-
-}
-
-//detect when player is clicking on the char
-function mousePressed() {
-    fill(90, 105, 96);
-    rect(width/4 * 3, height/4, 200, 400);
-
-    for (let box of clickBoxes) {
-        box.checkClick();
-    }
-
-    //check for player clicking on items
-    itemPositions = [];
-    selectedImg = null;
-    selectedPath = null
-    displayItems(selectedCategory, width/4 * 3, height/6);
-
-    for (let itemPos of itemPositions) {
-        if (itemPos.x + 50 > mouseX && mouseX > itemPos.x && mouseY > itemPos.y && mouseY < itemPos.y + 50) {
-           // console.log("item selected " + itemPos.name);
-            selectedImg = itemPos.img;
-            selectedPath = itemPos.path;
-        }
-    }
-    
-   // console.log(itemPositions);
+  displayCurrency();
 }
 
 
-function toTitleCase(str) {
-    return str.toLowerCase().split(' ').map(word => 
-        word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
+function switchCategory(direction) {
+  const categories = ["hats", "armor", "boots", "weapons"];
+  let currentIndex = categories.indexOf(selectedCategory);
+
+  if (direction === "left") {
+    selectedCategory =
+      categories[(currentIndex - 1 + categories.length) % categories.length];
+  } else if (direction === "right") {
+    selectedCategory = categories[(currentIndex + 1) % categories.length];
+  }
+
+  displayStore();
 }
 
-//use this function to display all the available choices
-//from selectedCategory
-function displayItems(items, x, y) {
-    let arr;
-    switch (items) {
-        case "hats":
-            arr = hats;
-        break;
-
-        case "armor":
-            arr = armor;
-        break;
-
-        case "boots":
-            arr = boots;
-        break;
-
-        case "weapons":
-            arr = weapons;
-        break;
-    }
-
-    storeDisplay.innerHTML = `<p id="store-header">${toTitleCase(items)}</p>`;
-
-    let maxLength = arr.length;
-    imageMode(CORNER);
-
-   //when the arrays are populated, this function will
-   //iterate through all the imgs in the arr and display
-    for (let i = 0; i < maxLength; i++) {
-        let img = arr[i].img;
-
-        storeDisplay.innerHTML = storeDisplay.innerHTML + 
-        `<div class="store-item" onClick="CallItem('${arr[i].path}')"> 
-            <img src= "${arr[i].path}" width="70" height="70"> 
-            <p> ${arr[i].name} </p>
-        </div>`;
-
-        itemPositions.push({ "x": x, "y": y + i * 60, "img": img, "name": arr[i].name, "path": arr[i].path });
-    }
+// Function to display currency amount
+function displayCurrency() {
+  textSize(30);
+  fill(255, 255, 255);
+  text("Money: $" + currency, 450, 50);
 }
 
-//class for the clicking zones
-class ClickAreas {
-    constructor(x, y, type) {
-        this.x = x;
-        this.y = y;
-        this.width = 100;
-        this.type = type;
+// Max stats for each attribute
+const MAX_STATS = {
+    stealth: 100,
+    defense: 100,
+    shootingSpeed: 100,
+    speed: 100
+  };
+  
+  function loadItemsFromSpriteSheet() {
+    hats = [
+      { img: extractItem(0, 1), name: "Shadow Hood", effect: "+10 Stealth", stealth: 10, cost: 15 },
+      { img: extractItem(0, 2), name: "Hunter's Cap", effect: "+20 Stealth", stealth: 20, cost: 25 },
+      { img: extractItem(0, 3), name: "Knight's Helm", effect: "+30 Stealth", stealth: 30, cost: 35 },
+      { img: extractItem(0, 4), name: "Mystic Crown", effect: "+40 Stealth", stealth: 40, cost: 50 },
+    ];
+  
+    armor = [
+      { img: extractItem(1, 0), name: "Leather Vest", effect: "+10 Defense", defense: 10, cost: 20 },
+      { img: extractItem(1, 1), name: "Chainmail", effect: "+20 Defense", defense: 20, cost: 40 },
+      { img: extractItem(1, 2), name: "Plate Armor", effect: "+30 Defense", defense: 30, cost: 60 },
+      { img: extractItem(1, 3), name: "Dragon Armor", effect: "+40 Defense", defense: 40, cost: 80 },
+      { img: extractItem(1, 4), name: "Titanium Suit", effect: "+50 Defense", defense: 50, cost: 100 },
+    ];
+  
+    weapons = [
+      { img: weaponsArr[0], name: "Leather Gloves", effect: "+5 Shooting Speed", shootingSpeed: 5, cost: 15 },
+      { img: weaponsArr[1], name: "Gauntlets", effect: "+10 Shooting Speed", shootingSpeed: 10, cost: 30 },
+      { img: weaponsArr[2], name: "Assassin Gloves", effect: "+20 Shooting Speed", shootingSpeed: 20, cost: 45 },
+      { img: weaponsArr[3], name: "Speedster Gloves", effect: "+30 Shooting Speed", shootingSpeed: 30, cost: 70 },
+      { img: weaponsArr[4], name: "Infinity Gauntlet", effect: "+40 Shooting Speed", shootingSpeed: 40, cost: 100 },
+    ];
+  
+    boots = [
+      { img: extractItem(4, 0), name: "Sandals of Swiftness", effect: "+10 Speed", speed: 10, cost: 10 },
+      { img: extractItem(4, 1), name: "Leather Boots", effect: "+20 Speed", speed: 20, cost: 20 },
+      { img: extractItem(4, 2), name: "Winged Boots", effect: "+30 Speed", speed: 30, cost: 40 },
+      { img: extractItem(4, 3), name: "Rocket Boots", effect: "+40 Speed", speed: 40, cost: 60 },
+      { img: extractItem(4, 4), name: "Sonic Boots", effect: "+50 Speed", speed: 50, cost: 90 },
+    ];
+  }
+  
+  
 
-        if (this.type == "armor") {
-            this.height = 100;
+// Extract specific item from the sprite sheet
+function extractItem(col, row) {
+  let item = createGraphics(itemWidth, itemHeight);
+  item.image(
+    spriteSheet,
+    0,
+    0,
+    itemWidth,
+    itemHeight,
+    col * itemWidth,
+    row * itemHeight,
+    itemWidth,
+    itemHeight
+  );
+  return item;
+}
+
+// Display items in the selected category
+function displayStore() {
+  const itemsContainer = document.getElementById("itemsContainer");
+  const categoryNameDisplay = document.getElementById("categoryName");
+
+  if (!itemsContainer || !categoryNameDisplay) {
+    console.error("Error: itemsContainer or categoryName element not found.");
+    return;
+  }
+
+  itemsContainer.innerHTML = "";
+  categoryNameDisplay.textContent = capitalize(selectedCategory);
+
+  let itemsArray = getItemsForCategory(selectedCategory);
+  itemsArray.forEach((item) => {
+    const itemDiv = document.createElement("div");
+    itemDiv.classList.add("shop-item");
+    const itemName = document.createElement("h3");
+    itemName.classList.add("item-name");
+    itemName.textContent = item.name;
+    const img = document.createElement("img");
+    img.src = item.img.canvas.toDataURL();
+    img.alt = item.name;
+    img.classList.add("item-image");
+
+    const detailsDiv = document.createElement("div");
+    detailsDiv.classList.add("item-details");
+
+    const buyButton = document.createElement("button");
+    buyButton.classList.add("buy-button");
+    buyButton.setAttribute("data-item-name", item.name); // Add data-item-name attribute
+    buyButton.innerHTML = `Buy <img src="./images/coin.png" class="coin-icon" alt="coin icon"> ${item.cost}`;
+    buyButton.onclick = () => buyItem(item);
+    const itemEffect = document.createElement("p");
+    itemEffect.classList.add("item-effect");
+    itemEffect.textContent = item.effect;
+    const itemCost = document.createElement("p");
+    itemCost.classList.add("item-cost");
+    itemCost.textContent = `Cost: $${item.cost}`;
+    detailsDiv.appendChild(itemName);
+    detailsDiv.appendChild(itemEffect);
+    itemDiv.appendChild(img);
+   detailsDiv.appendChild(buyButton);
+    itemDiv.appendChild(detailsDiv);
+    itemsContainer.appendChild(itemDiv);
+  });
+}
+
+function updateStatsBars() {
+    document.getElementById("stealthBar").querySelector(".fill").style.width = (stats.stealth / MAX_STATS.stealth * 100) + "%";
+    document.getElementById("defenseBar").querySelector(".fill").style.width = (stats.defense / MAX_STATS.defense * 100) + "%";
+    document.getElementById("shootingSpeedBar").querySelector(".fill").style.width = (stats.shootingSpeed / MAX_STATS.shootingSpeed * 100) + "%";
+    document.getElementById("speedBar").querySelector(".fill").style.width = (stats.speed / MAX_STATS.speed * 100) + "%";
+  }
+  
+  function buyItem(item) {
+    if (currency >= item.cost) {
+      currency -= item.cost;
+      localStorage.setItem("currency", currency);
+      document.getElementById("currencyAmount").textContent = currency;
+      alert(`You bought ${item.name} for $${item.cost}!`);
+      
+      if (item.stealth) stats.stealth += item.stealth;
+      if (item.defense) stats.defense += item.defense;
+      if (item.shootingSpeed) stats.shootingSpeed += item.shootingSpeed;
+      if (item.speed) stats.speed += item.speed;
+      item.purchased = true;
+      addToInventory(item);
+      updateStatsBars();
+      const buyButton = document.querySelector(`button[data-item-name="${item.name}"]`);
+        if (buyButton) {
+            buyButton.textContent = "Purchased";
+            buyButton.disabled = true;
+            buyButton.classList.add("purchased");
+            buyButton.style.backgroundColor = "gray";
         } else {
-            this.height = 50;
-        }
-
-        //load the image path from local storage
-        if (characterData[this.type] != null) {
-            this.img = loadImage(characterData[this.type]);
-        } else {
-            this.img = null;
-        }
-
-    }
-
-    checkClick() {
-        if (mouseX > this.x - this.width/2 && mouseX < this.x + this.width/2
-            && mouseY < this.y + this.height/2 && mouseY > this.y - this.height/2) {
-               selectedCategory = this.type;
-            }
-    }
-
-    display() {
-        //draw the selected item on this zone
-        if (this.img != null) {
-            imageMode(CENTER);
-            image(this.img, this.x, this.y, 100, 100);
-        } else {
-            fill(255, 255, 255);
-            rect(this.x, this.y, 10);
-        }
-    }
-
-    UpdateImage() {
-        if (this.type == selectedCategory && itemPositions.length > 0 && selectedImg != null) {
-            this.img = selectedImg;
-            //store it locally to prevent it from being removed
-            equipItem(this.type, selectedPath);
-        }
+      alert("Not enough money to buy this item!");
     }
 }
+  }
+  
+  function addToInventory(item) {
+    const inventoryDiv = document.getElementById("inventory");
 
-//function for assigning val to local storage
-function equipItem(category, item) {
+    // Create an inventory item div
+    const itemDiv = document.createElement("div");
+    itemDiv.classList.add("inventory-item");
 
-   // console.log(item);
+    // Add item image to inventory
+    const img = document.createElement("img");
+    img.src = item.img.canvas.toDataURL();
+    img.alt = item.name;
+    itemDiv.appendChild(img);
 
-        //store the image path
-        characterData[category] = item;
+    // Add item name
+    const itemName = document.createElement("p");
+    itemName.textContent = item.name;
+    itemDiv.appendChild(itemName);
 
-    // Save updated character data
-    SaveCharData(characterData);
-    //console.log(characterData[category]);
+    // Append the item div to the inventory container
+    inventoryDiv.appendChild(itemDiv);
 }
 
-function itemSelected(path) {
-  selectedPath = path;
-    selectedImg = loadImage(path);
+// Create and display navigation arrows
+function displayNavigationArrows() {
+  const container = document.getElementById("navigationContainer");
+  container.innerHTML = "";
 
+  const leftArrow = document.createElement("button");
+  leftArrow.classList.add("nav-arrow");
+  leftArrow.textContent = "<";
+  leftArrow.onclick = () => switchCategory("left");
+
+  const rightArrow = document.createElement("button");
+  rightArrow.classList.add("nav-arrow");
+  rightArrow.textContent = ">";
+  rightArrow.onclick = () => switchCategory("right");
+
+  container.appendChild(leftArrow);
+  container.appendChild(rightArrow);
 }
 
-function setSelectedPath() {
-
+// Capitalize category names
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-window.itemSelected = itemSelected;
+// Retrieve items by category
+function getItemsForCategory(category) {
+  switch (category) {
+    case "hats":
+      return hats;
+    case "armor":
+      return armor;
+    case "boots":
+      return boots;
+    case "weapons":
+      return weapons;
+  }
+}
+
+// Initialize display
+document.addEventListener("DOMContentLoaded", () => {
+  displayStore();
+  displayNavigationArrows();
+});
+
+localStorage.clear();

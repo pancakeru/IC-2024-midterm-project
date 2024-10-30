@@ -6,6 +6,66 @@ let bullets = []
 let frameDelay = 0;
 let fireSpeed = 5;
 let autoFire = -1;
+let sandTile, soldier;
+let cols, rows;
+let spriteSheet;
+let frameWidth = 200; // Width of each frame in the sprite sheet
+let frameHeight = 200; // Height of each frame in the sprite sheet
+let currentFrame = 0;
+let totalFrames = 6; 
+let animationSpeed = 10; // Adjust to control animation speed
+let idleFrames = [];
+let moveFrames = [];
+let shootFrames = [];
+let reloadFrames = [];
+let attackFrames = [];
+let enemies = [];
+let bulletImg;
+
+function preload(){
+    sandTile = loadImage("./assets/Sand _2.jpg");
+    skeletonSpriteIdle = loadImage("./assets/enemies/Skeleton/Skeleton_Idle.png");
+    goblinImg = loadImage("./assets/enemies/goblinsword.png");
+    golemImg = loadImage("./assets/enemies/golem-walk.png");
+    bulletImg = loadImage("./assets/bullet.png");
+
+    for (let i = 0; i <= 19; i++) {
+        idleFrames.push(
+          loadImage(
+            `./assets/Top_Down_Survivor/handgun/idle/survivor-idle_handgun_${i}.png`
+          )
+        );
+      }
+      for (let i = 0; i <= 14; i++) {
+        attackFrames.push(
+          loadImage(
+            `./assets/Top_Down_Survivor/handgun/meleeattack/survivor-meleeattack_handgun_${i}.png`
+          )
+        );
+      }
+    
+      for (let i = 0; i <= 19; i++) {
+        moveFrames.push(
+          loadImage(
+            `./assets/Top_Down_Survivor/handgun/move/survivor-move_handgun_${i}.png`
+          )
+        );
+      }
+      for (let i = 0; i <= 2; i++) {
+        shootFrames.push(
+          loadImage(
+            `./assets/Top_Down_Survivor/handgun/shoot/survivor-shoot_handgun_${i}.png`
+          )
+        );
+      }
+      for (let i = 0; i <= 14; i++) {
+        shootFrames.push(
+          loadImage(
+            `./assets/Top_Down_Survivor/handgun/reload/survivor-reload_handgun_${i}.png`
+          )
+        );
+      }
+}
 function setup() {
     createCanvas(400, 400);
     perlinGraphics = createGraphics(1600, 1600); // create scrolling perlin noise canvas 
@@ -13,7 +73,25 @@ function setup() {
     watergraphics.fill(128, 130, 250); // water border color
     watergraphics.rect(0, 0, 2000, 2000); // fill it with water
     image(watergraphics, 0, 0); // show water border
-
+    cols = width / tileSize;
+    rows = height / tileSize;
+    soldier = new Character(idleFrames, moveFrames, shootFrames, reloadFrames);
+    soldier.position.set(width / 2, height - 150);
+  
+   
+  
+  // Create multiple enemies
+    // Create multiple goblin enemies
+    for (let i = 0; i < 5; i++) {
+      let goblin = new Enemy(goblinImg, 29, 145, 11, 3) // Parameters for goblin (11 frames, 29x145)
+      enemies.push(goblin);
+    }
+  
+    // Create multiple golem enemies
+    for (let i = 0; i < 5; i++) {
+      let golem = new Enemy(golemImg, 46, 183, 7, 2.5); // Parameters for golem (7 frames, 46x183)
+      enemies.push(golem);
+    }
     // start the player in the center of the perlinGraphics
     scrollX = (perlinGraphics.width - width) / 2 + 10;
     scrollY = (perlinGraphics.height - height) / 2 + 10;
@@ -23,6 +101,12 @@ function setup() {
     // create a starting black 3x3 for player spawn
     perlinGraphics.rect(perlinGraphics.width / 2 - tileSize, perlinGraphics.height / 2 - tileSize, tileSize * 3, tileSize * 3);
 }
+
+function windowResized() {
+    resizeCanvas(windowWidth, windowHeight); 
+    cols = width / tileSize;
+    rows = height / tileSize;
+  }
 
 function draw() {
     background(220);
@@ -128,3 +212,52 @@ function keyPressed() {
         autoFire *= -1
     }
 }
+
+
+class Enemy {
+    constructor(spriteSheet, frameWidth, frameHeight, cols, scale) {
+      this.spriteSheet = spriteSheet;
+      this.frameWidth = frameWidth;     // Width of each frame in the sprite sheet
+      this.frameHeight = frameHeight;   // Height of each frame in the sprite sheet
+      this.cols = cols;                 // Number of columns (frames) in a row
+      this.currentFrame = 0;
+      this.animationSpeed = 7;          // Speed of animation
+      this.position = createVector(random(width), random(height / 2)); // Start enemy at a random x and y position in upper half of the screen
+      this.scale = scale;               // Scale factor for displaying the enemy larger
+    }
+  
+    display() {
+      // Calculate the column in the sprite sheet for the current frame
+      let col = this.currentFrame % this.cols;
+      let row = 0; // Use the first row since it's a single row sheet
+  
+      // Draw the current frame from the sprite sheet
+      image(
+        this.spriteSheet,
+        this.position.x,
+        this.position.y,
+        this.frameWidth * this.scale,   
+        this.frameHeight * this.scale,
+        col * this.frameWidth,
+        row * this.frameHeight,        
+        this.frameWidth,                
+        this.frameHeight                
+      );
+    }
+  
+    update() {
+      if (frameCount % this.animationSpeed === 0) {
+        // Cycle through frames in the first row
+        this.currentFrame = (this.currentFrame + 1) % this.cols;
+      }
+  
+      // Move the enemy downward
+      this.position.y += 1;
+  
+      // Reset position if the enemy moves off the screen (bottom)
+      if (this.position.y > height) {
+        this.position.y = -this.frameHeight * this.scale; 
+        this.position.x = random(0, width);       
+      }
+    }
+  }
