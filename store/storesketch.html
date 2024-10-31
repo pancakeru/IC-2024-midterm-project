@@ -8,8 +8,115 @@
 
     <script src="localStore.js"></script>
     <script src="main.js"></script>
-
+    <link rel="stylesheet" href="style.css" />
+    
 </head>
 <body>
+    <div id="canvasContainer">
+      <div class="header">
+        <div class="currency-display">
+          <span>Currency:</span> <span id="currencyAmount">$500</span>
+        </div>
+        <button
+          id="ready"
+          onclick="window.location.href='../maingame/index.html'"
+        >
+          Ready for Combat
+        </button>
+      </div>
+      <div class="character-shop">
+        <div class="character-cont">
+          <div class="stats-bars">
+            <div class="stat">
+              <label>Stealth</label>
+              <div class="bar" id="stealthBar"><div class="fill"></div></div>
+            </div>
+            <div class="stat">
+              <label>Defense</label>
+              <div class="bar" id="defenseBar"><div class="fill"></div></div>
+            </div>
+            <div class="stat">
+              <label>Shooting Speed</label>
+              <div class="bar" id="shootingSpeedBar">
+                <div class="fill"></div>
+              </div>
+            </div>
+            <div class="stat">
+              <label>Speed</label>
+              <div class="bar" id="speedBar"><div class="fill"></div></div>
+            </div>
+          </div>
+          <div class="character">
+            <img src="./images/character.png" id="character" />
+          </div>
+        </div>
 
-</body>
+        <div class="shop-inventory">
+          <div class="inventory-cont">
+            <div class="inventory-header">
+              <div class="one"><h1>Inventory</h1></div>
+            </div>
+            <div id="inventory">
+                <div class="inventory-category" id="armorInventory">
+                    <h3>Armor</h3>
+                  </div>
+                  <div class="inventory-category" id="helmetInventory">
+                    <h3>Helmet</h3>
+                  </div>
+                  <div class="inventory-category" id="bootsInventory">
+                    <h3>Boots</h3>
+                  </div>
+                  <div class="inventory-category" id="weaponInventory">
+                    <h3>Weapons</h3>
+                  </div>                  
+            </div>
+          </div>
+
+          <div class="shop-container">
+            <div class="shop-header">
+              <!-- <div class="one"><h1>Shop</h1></div> -->
+              <div id="categoryName" class="category-name"></div>
+              <div id="navigationContainer" class="navigation-container">
+                <button class="nav-arrow" onclick="switchCategory('left')">
+                  &lt;
+                </button>
+
+                <button class="nav-arrow" onclick="switchCategory('right')">
+                  &gt;
+                </button>
+              </div>
+
+              <!-- Navigation Arrows -->
+
+              <!-- Category Name Display -->
+            </div>
+
+            <div class="currency-display">
+              Money: $<span id="currencyAmount">500</span>
+            </div>
+
+            <div id="itemsContainer" class="items-container">
+              
+            </div>
+            <!-- Items Container -->
+
+            <div id="container">
+              <div id="game">
+                <iframe
+                  id="gameframe"
+                  src="storesketch.html"
+                  scrolling="no"
+                ></iframe>
+              </div>
+              <div id="store"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.0/lib/p5.min.js"></script>
+    <script src="./main.js"></script>
+  </body>
+  </html>
+

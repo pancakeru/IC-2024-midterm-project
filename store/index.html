@@ -6,87 +6,16 @@
     <link rel="stylesheet" href="style.css" />
     <title>Customization</title>
   </head>
-  <body>
-    <div id="canvasContainer">
-      <div class="header"></div>
-      <div class="character-cont">
-        <div class="stats-bars">
-          <div class="stat">
-            <label>Stealth</label>
-            <div class="bar" id="stealthBar"><div class="fill"></div></div>
-          </div>
-          <div class="stat">
-            <label>Defense</label>
-            <div class="bar" id="defenseBar"><div class="fill"></div></div>
-          </div>
-          <div class="stat">
-            <label>Shooting Speed</label>
-            <div class="bar" id="shootingSpeedBar">
-              <div class="fill"></div>
-            </div>
-          </div>
-          <div class="stat">
-            <label>Speed</label>
-            <div class="bar" id="speedBar"><div class="fill"></div></div>
-          </div>
-        </div>
-        <div class="character">
-          <!-- <img src="./images/border.png" id="character" /> -->
-        </div>
-      </div>
+<body>
 
-      <div class="shop-inventory">
-        <div class="inventory-cont">
-          <div class="inventory-header">
-            <div class="one"><h1>Inventory</h1></div>
-          </div>
-          <div id="inventory" class="inventory">
-       
-          </div>
-        </div>
-       
-        
-        <div class="shop-container">
-          <div class="shop-header">
-            <div class="one"><h1>Shop</h1></div>
-            <div id="categoryName" class="category-name"></div>
-            <div id="navigationContainer" class="navigation-container"></div>
-            <!-- Navigation Arrows -->
 
-            <!-- Category Name Display -->
-          </div>
+  <iframe id="gameframe" src="storesketch.html"></iframe>
+    <script>
+        const iFrameRef = document.getElementById("gameframe");
 
-          <div class="currency-display">
-            Money: $<span id="currencyAmount">500</span>
-          </div>
-
-          <div id="itemsContainer" class="items-container"></div>
-          <!-- Items Container -->
-
-          <button class="action-button" id="startButton">Start</button>
-
-          <div id="container">
-            <div id="game">
-              <iframe
-                id="gameframe"
-                src="storesketch.html"
-                scrolling="no"
-              ></iframe>
-            </div>
-            <div id="store"></div>
-          </div>
-
-          <button
-            id="ready"
-            onclick="window.location.href='../maingame/index.html'"
-          >
-            Ready for Combat
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.0/lib/p5.min.js"></script>
-    <script src="./main.js"></script>
-  </body>
+        function CallItem(path) {
+            iFrameRef.contentWindow.itemSelected(path);
+        }
+    </script>
+</body>
 </html>

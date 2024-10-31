@@ -1,4 +1,4 @@
-let spriteSheet;
+
 let itemWidth = 64;
 let itemHeight = 64;
 // Arrays to store categorized items
@@ -15,8 +15,17 @@ let stats = {
     shootingSpeed: 0, // Initial shooting speed level
     speed: 0         // Initial speed level
   };
-  
+  let characterData = {
+    hats: null,
+    armor: null,
+    weapons: null,
+    boots: null
+};
+let clickBoxes = [];
+let selectedImg = null;
+let selectedPath = null;
 
+let hatArea, armorArea, weaponArea, bootsArea;
 // Variables for tracking the selected category
 let selectedCategory = "hats";
 let currency;
@@ -31,11 +40,10 @@ function preload() {
   if (localStorage.getItem("currency") == null) {
     localStorage.setItem("currency", 500);
   }
-
 }
 
 function setup() {
-  createCanvas(windowWidth / 2, windowHeight / 2);
+  createCanvas(windowWidth , windowHeight );
   currency = localStorage.getItem("currency");
 
   loadItemsFromSpriteSheet();
@@ -44,19 +52,50 @@ function setup() {
   const itemsContainer = document.getElementById("itemsContainer");
   const categoryNameDisplay = document.getElementById("categoryName");
 
-  if (itemsContainer && categoryNameDisplay) {
-    displayStore(); // Display initial items
-    displayNavigationArrows();
-  } else {
-    console.error("Error: Required DOM elements not found.");
-  }
+  // if (itemsContainer && categoryNameDisplay) {
+  //   displayStore(); // Display initial items
+  //   displayNavigationArrows();
+  // } else {
+  //   console.error("Error: Required DOM elements not found.");
+  // }
   currency = localStorage.getItem("currency");
+  hatArea = new ClickAreas(width / 4 -80, height / 2 - 120, 130, 80, "hats");
+  armorArea = new ClickAreas(width / 4 - 80, height / 2 + 50, 180, 200, "armor");
+  bootsArea = new ClickAreas(width / 4 -90 , height / 2 + 390, 180, 150, "boots");
+  weaponArea = new ClickAreas(width / 4 - 50, height / 2 + 170, 100, 50, "weapons");
+
+  // Add clickable areas to the array
+  clickBoxes = [hatArea, armorArea, bootsArea, weaponArea];
+  clickBoxes.push(hatArea, armorArea, bootsArea, weaponArea);
+  displayStore(selectedCategory);
 }
 
 function draw() {
+// function draw() {
+  background(120, 150, 180); // Add a clear background color for visibility
+
+  // console.log(`Canvas dimensions: width = ${width}, height = ${height}`);
+
+  // Display currency
   displayCurrency();
+
+  // Draw rectangles with debugging logs
+  rectMode(CENTER);
+  fill(255, 0, 0); // Red, semi-transparent for visibility
+
+  
+  // rect(width / 4 -80, height / 2 - 120, 100, 50); // Hat area
+  // Update and display equipped items in clickBoxes
+  for (let box of clickBoxes) {
+    box.display();
+  }
 }
 
+function mousePressed() {
+  for (let box of clickBoxes) {
+      box.checkClick();
+  }
+}
 
 function switchCategory(direction) {
   const categories = ["hats", "armor", "boots", "weapons"];
@@ -104,15 +143,16 @@ const MAX_STATS = {
     ];
   
     weapons = [
-      { img: weaponsArr[0], name: "Leather Gloves", effect: "+5 Shooting Speed", shootingSpeed: 5, cost: 15 },
-      { img: weaponsArr[1], name: "Gauntlets", effect: "+10 Shooting Speed", shootingSpeed: 10, cost: 30 },
-      { img: weaponsArr[2], name: "Assassin Gloves", effect: "+20 Shooting Speed", shootingSpeed: 20, cost: 45 },
-      { img: weaponsArr[3], name: "Speedster Gloves", effect: "+30 Shooting Speed", shootingSpeed: 30, cost: 70 },
-      { img: weaponsArr[4], name: "Infinity Gauntlet", effect: "+40 Shooting Speed", shootingSpeed: 40, cost: 100 },
+      { img: weaponsArr[0], name: "Steel Fang", effect: "+5 Damage", damage: 5, cost: 20 },
+      { img: weaponsArr[1], name: "Viper Strike", effect: "+10 Damage", damage: 10, cost: 35 },
+      { img: weaponsArr[2], name: "Nightfall", effect: "+20 Damage", damage: 20, cost: 50 },
+      { img: weaponsArr[3], name: "Thunderbolt", effect: "+15 Damage", damage: 15, cost: 65 },
+      { img: weaponsArr[4], name: "Dragon's Fury", effect: "+40 Damage", damage: 40, cost: 120 },
     ];
+    
   
     boots = [
-      { img: extractItem(4, 0), name: "Sandals of Swiftness", effect: "+10 Speed", speed: 10, cost: 10 },
+      { img: extractItem(4, 0), name: "Sandals", effect: "+10 Speed", speed: 10, cost: 10 },
       { img: extractItem(4, 1), name: "Leather Boots", effect: "+20 Speed", speed: 20, cost: 20 },
       { img: extractItem(4, 2), name: "Winged Boots", effect: "+30 Speed", speed: 30, cost: 40 },
       { img: extractItem(4, 3), name: "Rocket Boots", effect: "+40 Speed", speed: 40, cost: 60 },
@@ -145,47 +185,77 @@ function displayStore() {
   const categoryNameDisplay = document.getElementById("categoryName");
 
   if (!itemsContainer || !categoryNameDisplay) {
-    console.error("Error: itemsContainer or categoryName element not found.");
-    return;
+      console.error("Error: Required DOM elements not found.");
+      return;
   }
 
-  itemsContainer.innerHTML = "";
-  categoryNameDisplay.textContent = capitalize(selectedCategory);
+  itemsContainer.innerHTML = ""; // Clear the current items
+  categoryNameDisplay.textContent = capitalize(selectedCategory); // Display the selected category
 
   let itemsArray = getItemsForCategory(selectedCategory);
   itemsArray.forEach((item) => {
-    const itemDiv = document.createElement("div");
-    itemDiv.classList.add("shop-item");
-    const itemName = document.createElement("h3");
-    itemName.classList.add("item-name");
-    itemName.textContent = item.name;
-    const img = document.createElement("img");
-    img.src = item.img.canvas.toDataURL();
-    img.alt = item.name;
-    img.classList.add("item-image");
+      const itemDiv = document.createElement("div");
+      itemDiv.classList.add("shop-item");
 
-    const detailsDiv = document.createElement("div");
-    detailsDiv.classList.add("item-details");
+      const itemName = document.createElement("h3");
+      itemName.classList.add("item-name");
+      itemName.textContent = item.name;
 
-    const buyButton = document.createElement("button");
-    buyButton.classList.add("buy-button");
-    buyButton.setAttribute("data-item-name", item.name); // Add data-item-name attribute
-    buyButton.innerHTML = `Buy <img src="./images/coin.png" class="coin-icon" alt="coin icon"> ${item.cost}`;
-    buyButton.onclick = () => buyItem(item);
-    const itemEffect = document.createElement("p");
-    itemEffect.classList.add("item-effect");
-    itemEffect.textContent = item.effect;
-    const itemCost = document.createElement("p");
-    itemCost.classList.add("item-cost");
-    itemCost.textContent = `Cost: $${item.cost}`;
-    detailsDiv.appendChild(itemName);
-    detailsDiv.appendChild(itemEffect);
-    itemDiv.appendChild(img);
-   detailsDiv.appendChild(buyButton);
-    itemDiv.appendChild(detailsDiv);
-    itemsContainer.appendChild(itemDiv);
+      const img = document.createElement("img");
+      img.src = item.img.canvas.toDataURL();
+      img.alt = item.name;
+      img.classList.add("item-image");
+
+      if (selectedCategory === "weapons") {
+          img.style.width = "150px"; // Adjust width for weapon images
+          img.style.height = "150px"; // Adjust height for weapon images
+      } else {
+          img.style.width = "64px"; // Default size for other items
+          img.style.height = "64px"; // Default size for other items
+      }
+
+      const detailsDiv = document.createElement("div");
+      detailsDiv.classList.add("item-details");
+
+      const itemEffect = document.createElement("p");
+      itemEffect.classList.add("item-effect");
+      itemEffect.textContent = item.effect;
+
+      const itemCost = document.createElement("p");
+      itemCost.classList.add("item-cost");
+      itemCost.textContent = `Cost: $${item.cost}`;
+
+      // Create the button for "Buy", "Equip" or "Equipped" based on item state
+      const actionButton = document.createElement("button");
+      actionButton.classList.add("buy-button");
+      actionButton.setAttribute("data-item-name", item.name); 
+      if (item.purchased) {
+        // If item is already purchased, show "Equip" or "Equipped"
+        if (item.equipped) {
+            actionButton.textContent = "Equipped";
+            actionButton.disabled = true; // Disable the button if already equipped
+            actionButton.classList.add("equipped");
+        } else {
+            actionButton.textContent = "Equip";
+            actionButton.onclick = () => equipItem(item, selectedCategory); // Equip if not equipped yet
+        }
+    } else {
+        // Show "Buy" button and set the click action to purchase
+        actionButton.innerHTML = `Buy <img src="./images/coin.png" class="coin-icon" alt="coin icon"> ${item.cost}`;
+        actionButton.onclick = () => buyItem(item);
+    }
+
+      // Append elements
+      detailsDiv.appendChild(itemName);
+      detailsDiv.appendChild(itemEffect);
+      detailsDiv.appendChild(itemCost);
+      itemDiv.appendChild(img);
+      detailsDiv.appendChild(actionButton);
+      itemDiv.appendChild(detailsDiv);
+      itemsContainer.appendChild(itemDiv);
   });
 }
+
 
 function updateStatsBars() {
     document.getElementById("stealthBar").querySelector(".fill").style.width = (stats.stealth / MAX_STATS.stealth * 100) + "%";
@@ -195,42 +265,125 @@ function updateStatsBars() {
   }
   
   function buyItem(item) {
+    if (item.purchased) {
+      console.log(`${item.name} is already purchased.`);
+      equipItem(item, selectedCategory); // Equip directly if already purchased
+      return;
+  }
+
     if (currency >= item.cost) {
-      currency -= item.cost;
-      localStorage.setItem("currency", currency);
-      document.getElementById("currencyAmount").textContent = currency;
-      alert(`You bought ${item.name} for $${item.cost}!`);
-      
-      if (item.stealth) stats.stealth += item.stealth;
-      if (item.defense) stats.defense += item.defense;
-      if (item.shootingSpeed) stats.shootingSpeed += item.shootingSpeed;
-      if (item.speed) stats.speed += item.speed;
-      item.purchased = true;
-      addToInventory(item);
-      updateStatsBars();
-      const buyButton = document.querySelector(`button[data-item-name="${item.name}"]`);
+        currency -= item.cost;
+        localStorage.setItem("currency", currency);
+        document.getElementById("currencyAmount").textContent = currency;
+        alert(`You bought ${item.name} for $${item.cost}!`);
+
+        // Update stats if the item has stat bonuses
+        if (item.stealth) stats.stealth += item.stealth;
+        if (item.defense) stats.defense += item.defense;
+        if (item.shootingSpeed) stats.shootingSpeed += item.shootingSpeed;
+        if (item.speed) stats.speed += item.speed;
+
+        item.purchased = true;
+        equipItem(item, selectedCategory); // Automatically equip the item upon purchase
+
+        updateStatsBars();
+
+        // Update the button to show "Equipped" if purchased
+        const buyButton = document.querySelector(`button[data-item-name="${item.name}"]`);
         if (buyButton) {
-            buyButton.textContent = "Purchased";
+            buyButton.textContent = "Equipped";
             buyButton.disabled = true;
-            buyButton.classList.add("purchased");
-            buyButton.style.backgroundColor = "gray";
-        } else {
-      alert("Not enough money to buy this item!");
+            buyButton.classList.add("equipped");
+        }
+    } else {
+        alert("Not enough money to buy this item!");
     }
 }
-  }
-  
-  function addToInventory(item) {
-    const inventoryDiv = document.getElementById("inventory");
 
-    // Create an inventory item div
+function equipItem(item, category) {
+  // Deselect the currently equipped item in the same category
+  deselectPreviousItem(category);
+
+  // Mark the item as equipped
+  item.equipped = true;
+  addToInventory(item, category); // Add the item to the inventory
+
+  // Update button to show "Equipped"
+  const equipButton = document.querySelector(`button[data-item-name="${item.name}"]`);
+  if (equipButton) {
+      equipButton.textContent = "Equipped";
+      equipButton.disabled = true; // Disable the button for the currently equipped item
+  }
+
+  // Update click box for the soldier
+  clickBoxes.forEach(box => {
+      if (box.type === category) {
+          box.updateImage(item.img.canvas ? item.img.canvas.toDataURL() : item.img.src); // Set image in the click area
+      }
+  });
+  characterData[category] = item.img.canvas ? item.img.canvas.toDataURL() : item.img.src;
+  localStorage.setItem("characterData", JSON.stringify(characterData));
+}
+
+
+
+function deselectPreviousItem(category) {
+  const itemsArray = getItemsForCategory(category);
+  itemsArray.forEach((item) => {
+      if (item.equipped) {
+          item.equipped = false;
+          const button = document.querySelector(`button[data-item-name="${item.name}"]`);
+          if (button) {
+              button.textContent = "Equip";
+              button.disabled = false; // Allow re-equipping of this item
+              button.classList.remove("equipped"); // Reset styling
+          }
+      }
+  });
+}
+
+function addToInventory(item, category) {
+  console.log(`Adding item to inventory: ${item.name} in category ${category}`);
+  
+  let categoryDiv;
+
+  switch (category) {
+    case "armor":
+      categoryDiv = document.getElementById("armorInventory");
+      break;
+    case "hats":
+      categoryDiv = document.getElementById("helmetInventory");
+      break;
+    case "weapons":
+      categoryDiv = document.getElementById("weaponInventory");
+      break;
+    case "boots":
+      categoryDiv = document.getElementById("bootsInventory");
+      break;
+    default:
+      console.warn(`Unknown category: ${category}`);
+      return;
+  }
+
+  console.log(`Category div found: ${categoryDiv ? "Yes" : "No"}`);
+
+  if (categoryDiv) {
+    // Remove the previous item, but keep the <h3> header
+    const previousItem = categoryDiv.querySelector(".inventory-item");
+    if (previousItem) {
+      previousItem.remove();
+    }
+
+    // Create a new div for the item
     const itemDiv = document.createElement("div");
     itemDiv.classList.add("inventory-item");
 
     // Add item image to inventory
     const img = document.createElement("img");
-    img.src = item.img.canvas.toDataURL();
+    img.src = item.img.canvas ? item.img.canvas.toDataURL() : item.img.src; 
     img.alt = item.name;
+    img.style.width = "50px";
+    img.style.height = "50px";
     itemDiv.appendChild(img);
 
     // Add item name
@@ -238,9 +391,15 @@ function updateStatsBars() {
     itemName.textContent = item.name;
     itemDiv.appendChild(itemName);
 
-    // Append the item div to the inventory container
-    inventoryDiv.appendChild(itemDiv);
+    // Set up the click event to equip the item on the soldier
+    itemDiv.onclick = () => equipItemOnSoldier(item, category);
+
+    // Append the new item div to the category container
+    categoryDiv.appendChild(itemDiv);
+  }
 }
+
+
 
 // Create and display navigation arrows
 function displayNavigationArrows() {
@@ -279,11 +438,66 @@ function getItemsForCategory(category) {
       return weapons;
   }
 }
+function equipItemOnSoldier(item, category) {
+  selectedImg = item.img;
+  characterData[category] = item.img; // Save the p5.Image object directly for use
 
-// Initialize display
-document.addEventListener("DOMContentLoaded", () => {
-  displayStore();
-  displayNavigationArrows();
-});
+  // Update the image on the correct clickBox
+  clickBoxes.forEach(box => {
+    if (box.type === category) {
+      box.updateImage(item.img); // Pass p5.Image to updateImage
+    }
+  });
+
+  // Save character data for persistence
+  localStorage.setItem("characterData", JSON.stringify(characterData));
+}
+
+class ClickAreas {
+  constructor(x, y, width, height, type) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.type = type;
+
+    // Load the equipped image if already in characterData
+    this.img = characterData[this.type] ? loadImage(characterData[this.type]) : null;
+  
+  }
+
+  // Check if a click is within this area
+  checkClick() {
+    if (mouseX > this.x - this.width / 2 && mouseX < this.x + this.width / 2 &&
+        mouseY < this.y + this.height / 2 && mouseY > this.y - this.height / 2) {
+      selectedCategory = this.type;
+      
+      displayStore(); // Show items from the selected category
+    }
+  }
+
+  // Display equipped item image or an outline for debugging
+  display() {
+    if (this.img) {
+      imageMode(CENTER);
+      image(this.img, this.x, this.y, this.width, this.height); // Draw the equipped item
+    } else {
+      // Draw red outline if no image is equipped
+      noFill();
+      stroke(255, 0, 0);
+      rectMode(CENTER);
+      rect(this.x, this.y, this.width, this.height);
+    }
+  }
+
+  // Update image for the click area when a new item is equipped
+  updateImage(img) {
+    this.img = img;
+    characterData[this.type] = img; // Save to character data for persistence
+    localStorage.setItem("characterData", JSON.stringify(characterData));
+    console.log(`Updated ${this.type} with image: ${img}`); 
+  }
+}
+
 
 localStorage.clear();

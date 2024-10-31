@@ -1,13 +1,29 @@
 @import url('https://fonts.googleapis.com/css2?family=Metal+Mania&family=Tomorrow:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
+/* Sand Background: #f0e5d1
+Warm Orange (Accent): #f4a261
+Clay-like Shade (Button Backgrounds): #d38b5d
+Darker Clay (Button Hover): #c3724e
+Gold (Currency & Stat Fills): #ffd700
+Soft Gold (Stat Bar Fill): #e09f3e
+Desert Rose (Borders): #d3b8ae
+Light Sand (Containers): #faf0dc
+Neutral Brown (Purchased Items): #8e8268
+Deep Brown (Text): #4b3832 */
 body {
     font-family: "Tomorrow", sans-serif;
   /* background-color: #333; */
   color: black;
+  background-color: #f0e5d1;
   margin: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
+  /* background-image: url('./images/drawing-desert-with-landscape-background_889056-167277.avif');  */
+  background-size: cover; /* Adjusts the image to cover the entire div */
+  background-attachment: fixed;
+  background-size: 100% 100%;
+  background-repeat: no-repeat
 }
 
 h1 {
@@ -29,7 +45,7 @@ h1 {
 }
 
 .purchased{
-  background-color: grey;
+  background-color: #8e8268;
 }
 .navigation {
   display: flex;
@@ -38,24 +54,168 @@ h1 {
   justify-content: space-between;
 }
 #itemsContainer {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 1.2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Each item will be at least 150px, but grow to fit */
+  gap: 1rem;
   justify-content: center;
   margin-top: 0;
-  /* background-color: #444; */
-  padding: 10px;
-  border-radius: 10px;
-  width: fit-content;
-  height: 50vh;
   padding: 1.2rem;
+  border-radius: 10px;
+  width: 90%;
+  height: auto;
 }
+
+
+#ready {
+  align-items: center;
+  margin: 0;
+  appearance: none;
+  background-color: #d38b5d;
+  border-radius: 24px;
+  border-style: none;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 3px 5px -1px,
+    rgba(0, 0, 0, 0.14) 0 6px 10px 0, rgba(0, 0, 0, 0.12) 0 1px 18px 0;
+  box-sizing: border-box;
+  color: white;
+  cursor: pointer;
+  display: inline-flex;
+  fill: currentcolor;
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  font-size: 1.4rem;
+  font-weight: 500;
+  height: 32px;
+  justify-content: center;
+  letter-spacing: 0.25px;
+  line-height: normal;
+  max-width: 100%;
+  overflow: visible;
+  padding: 2px 24px;
+  position: relative;
+  text-align: center;
+  text-transform: none;
+  transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 15ms linear 30ms, transform 270ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  /* width: 100%; */
+  will-change: transform, opacity;
+  z-index: 0;
+}
+
+#ready:hover {
+  background: #f6f9fe;
+  color: #c3724e;
+}
+
+#ready:active {
+  box-shadow: 0 4px 4px 0 rgb(60 64 67 / 30%),
+    0 8px 12px 6px rgb(60 64 67 / 15%);
+  outline: none;
+}
+
+#ready:focus {
+  outline: none;
+  border: 2px solid #d3b8ae;
+}
+
+#ready:not(:disabled) {
+  box-shadow: rgba(60, 64, 67, 0.3) 0 1px 3px 0,
+    rgba(60, 64, 67, 0.15) 0 4px 8px 3px;
+}
+
+#ready:not(:disabled):hover {
+  box-shadow: rgba(60, 64, 67, 0.3) 0 2px 3px 0,
+    rgba(60, 64, 67, 0.15) 0 6px 10px 4px;
+}
+
+#ready:not(:disabled):focus {
+  box-shadow: rgba(60, 64, 67, 0.3) 0 1px 3px 0,
+    rgba(60, 64, 67, 0.15) 0 4px 8px 3px;
+}
+
+#ready:not(:disabled):active {
+  box-shadow: rgba(60, 64, 67, 0.3) 0 4px 4px 0,
+    rgba(60, 64, 67, 0.15) 0 8px 12px 6px;
+}
+
+#ready:disabled {
+  box-shadow: rgba(60, 64, 67, 0.3) 0 1px 3px 0,
+    rgba(60, 64, 67, 0.15) 0 4px 8px 3px;
+}
+.item-cost {
+    font-size: 14px;
+    color: #555;
+    margin-top: 5px;
+  }
+  
+.shop-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1; /* Maintains a square shape */
+  border: 4px ridge #a1665c;
+  background-image: url('./images/sand_texture.jpg'); /* Replace with your image path */
+  background-size: cover;
+  background-position: center;
+  padding: 1rem;
+  box-sizing: border-box;
+  border-radius: 10px;
+}
+
+
+
+.shop-item p{
+  font-size: 1rem;
+}
+
+.shop-item img {
+  width: 100%;
+  height: 100%; /* Image will resize proportionally */
+  max-height: 100%; /* Ensures image does not exceed container */
+  border-radius: 5px;
+}
+
+.buy-button img{
+    width: 50%;
+    height: 80%;
+}
+
+
+/* general elements */
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+p {
+  font-size: 20px;
+  text-align: center;
+}
+
+/* div that holds the iframe */
+#game {
+  width: 80%;
+  max-width: 600px;
+  height: 400px;
+  margin: 15px;
+}
+
+/* Char display iframe */
+iframe {
+  width: 100vw;
+  height: 100vh;
+  border: none;
+  /* opacity: 0.5; */
+}
+
+/* Ready for Combat button */
 .buy-button {
   align-items: center;
   margin: 0;
   appearance: none;
-  background-color: #219882ff;
+  background-color: #d38b5d;
   border-radius: 24px;
   border-style: none;
   box-shadow: rgba(0, 0, 0, 0.2) 0 3px 5px -1px,
@@ -90,7 +250,7 @@ h1 {
 
 .buy-button:hover {
   background: #f6f9fe;
-  color: #174ea6;
+  color: white;
 }
 
 .buy-button:active {
@@ -101,17 +261,19 @@ h1 {
 
 .buy-button:focus {
   outline: none;
-  border: 2px solid #4285f4;
+  border: 2px solid #d3b8ae;
 }
 
 .buy-button:not(:disabled) {
   box-shadow: rgba(60, 64, 67, 0.3) 0 1px 3px 0,
     rgba(60, 64, 67, 0.15) 0 4px 8px 3px;
+
 }
 
 .buy-button:not(:disabled):hover {
   box-shadow: rgba(60, 64, 67, 0.3) 0 2px 3px 0,
     rgba(60, 64, 67, 0.15) 0 6px 10px 4px;
+    color: black;
 }
 
 .buy-button:not(:disabled):focus {
@@ -128,86 +290,10 @@ h1 {
   box-shadow: rgba(60, 64, 67, 0.3) 0 1px 3px 0,
     rgba(60, 64, 67, 0.15) 0 4px 8px 3px;
 }
-.item-cost {
-    font-size: 14px;
-    color: #555;
-    margin-top: 5px;
-  }
-  
-.shop-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  /* justify-content: space-between; */
-  margin: 10px 0;
-  padding: 1rem;
-  justify-content: center;
-
-  margin-top: 0;
-  border: 14px ridge #a1665c;
-  background-image: url('./images/sand_texture.jpg'); /* Replace with your image path */
-  background-size: cover;  /* Cover the entire div */
-  background-position: center; /* Center the image */
-  background-repeat: no-repeat
-}
-
-.store-item img {
-  width: 64px;
-  height: 64px;
-  border-radius: 5px;
-  margin-right: 10px;
-}
-
-.buy-button img{
-    width: 50%;
-    height: 50%;
-}
-
-.currency-display {
-  font-size: 24px;
-  color: #ffd700;
-  margin-top: 20px;
-  text-align: center;
-  width: 100%;
-}
-
-/* general elements */
-h1 {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-p {
-  font-size: 20px;
-  text-align: center;
-}
-
-/* div that holds the iframe */
-#game {
-  width: 80%;
-  max-width: 600px;
-  height: 400px;
-  margin: 15px;
-}
-
-/* Char display iframe */
-iframe {
-  width: 600px;
-  height: 600px;
-  border: none;
-}
-
-/* Ready for Combat button */
-#ready {
-  display: block;
-  padding: 10px 20px;
-  font-size: 16px;
-  margin-top: 40px;
-  margin: 0 auto;
-}
 
 canvas {
-  display: none;
+  /* display: none; */
+  z-index: 10;
 }
 
 #canvasContainer{
@@ -215,6 +301,8 @@ canvas {
     position: absolute;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
+    margin: 2rem;
     margin: 0;
     flex: 1 2;
     top: 50%;
@@ -222,10 +310,16 @@ canvas {
     transform: translate(-50%, -50%);
 }
 
+.character-shop{
+  display: flex;
+}
+
 #navigationContainer {
   display: flex;
   justify-content: space-between;
   width: 100%;
+  /* justify-content: center; */
+  align-items: center;
   margin-top: 20px;
 }
 
@@ -240,6 +334,46 @@ canvas {
   transition: background-color 0.3s;
 }
 
+.header{
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 20px;
+
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  font-family: "Metal Mania", sans-serif;
+  color: #8b5e3c;
+}
+.currency-display {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+}
+
+#currencyAmount {
+
+}
+.ready-button {
+  background-color: #8e8268;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.ready-button:hover {
+  background-color: #a89276;
+}
+
+.ready-button:active {
+  background-color: #7a6953;
+}
 .nav-arrow:hover {
   background-color: #666;
 }
@@ -278,18 +412,25 @@ canvas {
   .bar .fill {
     height: 100%;
     width: 0;
-    background: #4CAF50;
+    background: #ffd700;
     transition: width 0.3s ease;
   }
   
 .character{
     width: 100%;
-    border: 10px ridge #a1665c;
+    border: 10px ridge #d3b8ae;
     height: 80%;
+    display: flex;
+    justify-content: center; /* Centers the image horizontally */
+    align-items: center; /* Centers the image vertically */
+
+    
 }
+
 .character img{
-    /* width: 30%;
-    height: 80vh; */
+  max-width: 100%; /* Ensures the image doesn't exceed the container's width */
+  height: auto;
+  opacity: 0.5;
 }
 
 .character-cont{
@@ -315,18 +456,29 @@ canvas {
 } */
 /* Container holding the inventory items */
 #inventory {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* Adjust 100px for item size */
+  display: flex;
+  justify-content: space-evenly;
   gap: 10px; /* Space between items */
   padding: 10px;
-  background-color: #f0f0f0;
-  border: 1px solid #ddd;
+  background-color: #faf0dc;
+  /* border: 1px solid #ddd; */
   border-radius: 8px;
   /* height: 50%;
   width: 80%; */
   margin: 10px auto; /* Center the inventory */
-  height: 90%;
+  height: 75%;
   
+}
+.inventory-container {
+  display: flex;
+  /* flex-wrap: wrap; */
+  gap: 10px;
+justify-content: space-evenly;
+  align-items: center;
+  margin: 0;
+  /* width: 100%;
+  height: 50%; */
+  /* background-color: #392925ff; */
 }
 
 .inventory-cont{
@@ -335,12 +487,19 @@ canvas {
 }
 /* Style for each inventory item */
 .inventory-item {
-  background-color: #fff;
+  /* background-color: #bd9e92; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   border-radius: 8px;
   text-align: center;
   padding: 10px;
+  border: #d3b8ae 1px solid;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  height: fit-content;
+  /* border: #d3b8ae 1px solid;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
+  height: 70%;
 }
 
 .inventory-item img {
@@ -411,6 +570,23 @@ h1 em {
     height: 90vh;
 }
 
+.inventory-category {
+  /* border: 2px solid #231515; */
+  border-radius: 8px;
+  padding: 10px;
+  width: 150px;
+  min-height: 100px;
+  /* background-color: #f8f8f8; */
+  text-align: center;
+  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
+}
+
+.inventory-category h3 {
+  font-size: 1.7rem;
+  color: #333;
+  margin-bottom: 5px;
+  font-family: "Metal Mania", sans-serif;
+}
 
 /* .inventory-item img {
   width: 50px;
