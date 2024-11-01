@@ -292,9 +292,10 @@ iframe {
 }
 
 canvas {
-  /* display: none; */
-  z-index: 10;
+  /* position: relative; */
+  z-index: 1;
 }
+
 
 #canvasContainer{
     display: flex;
@@ -417,6 +418,8 @@ canvas {
   }
   
 .character{
+  /* position: absolute; */
+  z-index: -999;
     width: 100%;
     border: 10px ridge #d3b8ae;
     height: 80%;
@@ -430,7 +433,10 @@ canvas {
 .character img{
   max-width: 100%; /* Ensures the image doesn't exceed the container's width */
   height: auto;
-  opacity: 0.5;
+
+  position: absolute;
+  /* opacity: 0.5; */
+  z-index: -999;
 }
 
 .character-cont{

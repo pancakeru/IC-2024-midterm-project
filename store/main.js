@@ -1,4 +1,3 @@
-
 let itemWidth = 64;
 let itemHeight = 64;
 // Arrays to store categorized items
@@ -8,18 +7,18 @@ let weaponsArr = [];
 let weapons = [];
 let boots = [];
 let gloves = [];
-let inventory=[]
+let inventory = [];
 let stats = {
-    stealth: 0,      // Initial stealth level
-    defense: 0,      // Initial defense level
-    shootingSpeed: 0, // Initial shooting speed level
-    speed: 0         // Initial speed level
-  };
-  let characterData = {
-    hats: null,
-    armor: null,
-    weapons: null,
-    boots: null
+  stealth: 0, // Initial stealth level
+  defense: 0, // Initial defense level
+  shootingSpeed: 0, // Initial shooting speed level
+  speed: 0, // Initial speed level
+};
+let characterData = {
+  hats: null,
+  armor: null,
+  weapons: null,
+  boots: null,
 };
 let clickBoxes = [];
 let selectedImg = null;
@@ -29,21 +28,22 @@ let hatArea, armorArea, weaponArea, bootsArea;
 // Variables for tracking the selected category
 let selectedCategory = "hats";
 let currency;
-
+let characterImg;
 function preload() {
   spriteSheet = loadImage("./images/armour.png");
-  weaponsArr[0]= loadImage("./images/weapons/AK_full.png");
-  weaponsArr[1]= loadImage("./images/weapons/Assault rifle_full.png");
-  weaponsArr[2]= loadImage("./images/weapons/pistol_full.png");
-  weaponsArr[3]= loadImage("./images/weapons/Shootgun_full.png");
-  weaponsArr[4]= loadImage("./images/weapons/USI_full.png");
+  characterImg = loadImage("./images/character.png");
+  weaponsArr[0] = loadImage("./images/weapons/AK_full.png");
+  weaponsArr[1] = loadImage("./images/weapons/Assault rifle_full.png");
+  weaponsArr[2] = loadImage("./images/weapons/pistol_full.png");
+  weaponsArr[3] = loadImage("./images/weapons/Shootgun_full.png");
+  weaponsArr[4] = loadImage("./images/weapons/USI_full.png");
   if (localStorage.getItem("currency") == null) {
     localStorage.setItem("currency", 500);
   }
 }
 
 function setup() {
-  createCanvas(windowWidth , windowHeight );
+  createCanvas(windowWidth, windowHeight);
   currency = localStorage.getItem("currency");
 
   loadItemsFromSpriteSheet();
@@ -59,10 +59,28 @@ function setup() {
   //   console.error("Error: Required DOM elements not found.");
   // }
   currency = localStorage.getItem("currency");
-  hatArea = new ClickAreas(width / 4 -80, height / 2 - 120, 130, 80, "hats");
-  armorArea = new ClickAreas(width / 4 - 80, height / 2 + 50, 180, 200, "armor");
-  bootsArea = new ClickAreas(width / 4 -90 , height / 2 + 390, 180, 150, "boots");
-  weaponArea = new ClickAreas(width / 4 - 50, height / 2 + 170, 100, 50, "weapons");
+  hatArea = new ClickAreas(width / 4 - 80, height / 2 - 120, 130, 80, "hats");
+  armorArea = new ClickAreas(
+    width / 4 - 90,
+    height / 2 + 40,
+    220,
+    200,
+    "armor"
+  );
+  bootsArea = new ClickAreas(
+    width / 4 - 90,
+    height / 2 + 370,
+    180,
+    150,
+    "boots"
+  );
+  weaponArea = new ClickAreas(
+    width / 4 - 30,
+    height / 2 + 170,
+    100,
+    50,
+    "weapons"
+  );
 
   // Add clickable areas to the array
   clickBoxes = [hatArea, armorArea, bootsArea, weaponArea];
@@ -71,30 +89,38 @@ function setup() {
 }
 
 function draw() {
-// function draw() {
+  // function draw() {
   background(120, 150, 180); // Add a clear background color for visibility
-
+  
   // console.log(`Canvas dimensions: width = ${width}, height = ${height}`);
 
-  // Display currency
-  displayCurrency();
+  // // Display currency
+  // displayCurrency();
 
   // Draw rectangles with debugging logs
   rectMode(CENTER);
   fill(255, 0, 0); // Red, semi-transparent for visibility
 
-  
   // rect(width / 4 -80, height / 2 - 120, 100, 50); // Hat area
   // Update and display equipped items in clickBoxes
+ 
+  // if (characterImg) {
+  //   console.log("Drawing character image");
+  //   image(characterImg, width / 2 -720, height / 2- 190, 350, 650);
+  // }
   for (let box of clickBoxes) {
     box.display();
   }
 }
 
 function mousePressed() {
-  for (let box of clickBoxes) {
+  clickBoxes.forEach((box) => {
+    if (typeof box.checkClick === 'function') {
       box.checkClick();
-  }
+    } else {
+      console.error("Error: checkClick is not defined for box", box);
+    }
+  });
 }
 
 function switchCategory(direction) {
@@ -111,56 +137,167 @@ function switchCategory(direction) {
   displayStore();
 }
 
-// Function to display currency amount
-function displayCurrency() {
-  textSize(30);
-  fill(255, 255, 255);
-  text("Money: $" + currency, 450, 50);
-}
+// // Function to display currency amount
+// function displayCurrency() {
+//   textSize(30);
+//   fill(255, 255, 255);
+//   text("Money: $" + currency, 450, 50);
+// }
 
 // Max stats for each attribute
 const MAX_STATS = {
-    stealth: 100,
-    defense: 100,
-    shootingSpeed: 100,
-    speed: 100
-  };
-  
-  function loadItemsFromSpriteSheet() {
-    hats = [
-      { img: extractItem(0, 1), name: "Shadow Hood", effect: "+10 Stealth", stealth: 10, cost: 15 },
-      { img: extractItem(0, 2), name: "Hunter's Cap", effect: "+20 Stealth", stealth: 20, cost: 25 },
-      { img: extractItem(0, 3), name: "Knight's Helm", effect: "+30 Stealth", stealth: 30, cost: 35 },
-      { img: extractItem(0, 4), name: "Mystic Crown", effect: "+40 Stealth", stealth: 40, cost: 50 },
-    ];
-  
-    armor = [
-      { img: extractItem(1, 0), name: "Leather Vest", effect: "+10 Defense", defense: 10, cost: 20 },
-      { img: extractItem(1, 1), name: "Chainmail", effect: "+20 Defense", defense: 20, cost: 40 },
-      { img: extractItem(1, 2), name: "Plate Armor", effect: "+30 Defense", defense: 30, cost: 60 },
-      { img: extractItem(1, 3), name: "Dragon Armor", effect: "+40 Defense", defense: 40, cost: 80 },
-      { img: extractItem(1, 4), name: "Titanium Suit", effect: "+50 Defense", defense: 50, cost: 100 },
-    ];
-  
-    weapons = [
-      { img: weaponsArr[0], name: "Steel Fang", effect: "+5 Damage", damage: 5, cost: 20 },
-      { img: weaponsArr[1], name: "Viper Strike", effect: "+10 Damage", damage: 10, cost: 35 },
-      { img: weaponsArr[2], name: "Nightfall", effect: "+20 Damage", damage: 20, cost: 50 },
-      { img: weaponsArr[3], name: "Thunderbolt", effect: "+15 Damage", damage: 15, cost: 65 },
-      { img: weaponsArr[4], name: "Dragon's Fury", effect: "+40 Damage", damage: 40, cost: 120 },
-    ];
-    
-  
-    boots = [
-      { img: extractItem(4, 0), name: "Sandals", effect: "+10 Speed", speed: 10, cost: 10 },
-      { img: extractItem(4, 1), name: "Leather Boots", effect: "+20 Speed", speed: 20, cost: 20 },
-      { img: extractItem(4, 2), name: "Winged Boots", effect: "+30 Speed", speed: 30, cost: 40 },
-      { img: extractItem(4, 3), name: "Rocket Boots", effect: "+40 Speed", speed: 40, cost: 60 },
-      { img: extractItem(4, 4), name: "Sonic Boots", effect: "+50 Speed", speed: 50, cost: 90 },
-    ];
-  }
-  
-  
+  stealth: 100,
+  defense: 100,
+  shootingSpeed: 100,
+  speed: 100,
+};
+
+function loadItemsFromSpriteSheet() {
+  hats = [
+    {
+      img: extractItem(0, 1),
+      name: "Shadow Hood",
+      effect: "+10 Stealth",
+      stealth: 10,
+      cost: 15,
+    },
+    {
+      img: extractItem(0, 2),
+      name: "Hunter's Cap",
+      effect: "+20 Stealth",
+      stealth: 20,
+      cost: 25,
+    },
+    {
+      img: extractItem(0, 3),
+      name: "Knight's Helm",
+      effect: "+30 Stealth",
+      stealth: 30,
+      cost: 35,
+    },
+    {
+      img: extractItem(0, 4),
+      name: "Mystic Crown",
+      effect: "+40 Stealth",
+      stealth: 40,
+      cost: 50,
+    },
+  ];
+
+  armor = [
+    {
+      img: extractItem(1, 0),
+      name: "Leather Vest",
+      effect: "+10 Defense",
+      defense: 10,
+      cost: 20,
+    },
+    {
+      img: extractItem(1, 1),
+      name: "Chainmail",
+      effect: "+20 Defense",
+      defense: 20,
+      cost: 40,
+    },
+    {
+      img: extractItem(1, 2),
+      name: "Plate Armor",
+      effect: "+30 Defense",
+      defense: 30,
+      cost: 60,
+    },
+    {
+      img: extractItem(1, 3),
+      name: "Dragon Armor",
+      effect: "+40 Defense",
+      defense: 40,
+      cost: 80,
+    },
+    {
+      img: extractItem(1, 4),
+      name: "Titanium Suit",
+      effect: "+50 Defense",
+      defense: 50,
+      cost: 100,
+    },
+  ];
+
+  weapons = [
+    {
+      img: weaponsArr[0],
+      name: "Steel Fang",
+      effect: "+5 Damage",
+      damage: 5,
+      cost: 20,
+    },
+    {
+      img: weaponsArr[1],
+      name: "Viper Strike",
+      effect: "+10 Damage",
+      damage: 10,
+      cost: 35,
+    },
+    {
+      img: weaponsArr[2],
+      name: "Nightfall",
+      effect: "+20 Damage",
+      damage: 20,
+      cost: 50,
+    },
+    {
+      img: weaponsArr[3],
+      name: "Thunderbolt",
+      effect: "+15 Damage",
+      damage: 15,
+      cost: 65,
+    },
+    {
+      img: weaponsArr[4],
+      name: "Dragon's Fury",
+      effect: "+40 Damage",
+      damage: 40,
+      cost: 120,
+    },
+  ];
+
+  boots = [
+    {
+      img: extractItem(4, 0),
+      name: "Sandals",
+      effect: "+10 Speed",
+      speed: 10,
+      cost: 10,
+    },
+    {
+      img: extractItem(4, 1),
+      name: "Leather Boots",
+      effect: "+20 Speed",
+      speed: 20,
+      cost: 20,
+    },
+    {
+      img: extractItem(4, 2),
+      name: "Winged Boots",
+      effect: "+30 Speed",
+      speed: 30,
+      cost: 40,
+    },
+    {
+      img: extractItem(4, 3),
+      name: "Rocket Boots",
+      effect: "+40 Speed",
+      speed: 40,
+      cost: 60,
+    },
+    {
+      img: extractItem(4, 4),
+      name: "Sonic Boots",
+      effect: "+50 Speed",
+      speed: 50,
+      cost: 90,
+    },
+  ];
+}
 
 // Extract specific item from the sprite sheet
 function extractItem(col, row) {
@@ -185,8 +322,8 @@ function displayStore() {
   const categoryNameDisplay = document.getElementById("categoryName");
 
   if (!itemsContainer || !categoryNameDisplay) {
-      console.error("Error: Required DOM elements not found.");
-      return;
+    console.error("Error: Required DOM elements not found.");
+    return;
   }
 
   itemsContainer.innerHTML = ""; // Clear the current items
@@ -194,157 +331,157 @@ function displayStore() {
 
   let itemsArray = getItemsForCategory(selectedCategory);
   itemsArray.forEach((item) => {
-      const itemDiv = document.createElement("div");
-      itemDiv.classList.add("shop-item");
+    const itemDiv = document.createElement("div");
+    itemDiv.classList.add("shop-item");
 
-      const itemName = document.createElement("h3");
-      itemName.classList.add("item-name");
-      itemName.textContent = item.name;
+    const itemName = document.createElement("h3");
+    itemName.classList.add("item-name");
+    itemName.textContent = item.name;
 
-      const img = document.createElement("img");
-      img.src = item.img.canvas.toDataURL();
-      img.alt = item.name;
-      img.classList.add("item-image");
+    const img = document.createElement("img");
+    img.src = item.img.canvas.toDataURL();
+    img.alt = item.name;
+    img.classList.add("item-image");
 
-      if (selectedCategory === "weapons") {
-          img.style.width = "150px"; // Adjust width for weapon images
-          img.style.height = "150px"; // Adjust height for weapon images
-      } else {
-          img.style.width = "64px"; // Default size for other items
-          img.style.height = "64px"; // Default size for other items
-      }
-
-      const detailsDiv = document.createElement("div");
-      detailsDiv.classList.add("item-details");
-
-      const itemEffect = document.createElement("p");
-      itemEffect.classList.add("item-effect");
-      itemEffect.textContent = item.effect;
-
-      const itemCost = document.createElement("p");
-      itemCost.classList.add("item-cost");
-      itemCost.textContent = `Cost: $${item.cost}`;
-
-      // Create the button for "Buy", "Equip" or "Equipped" based on item state
-      const actionButton = document.createElement("button");
-      actionButton.classList.add("buy-button");
-      actionButton.setAttribute("data-item-name", item.name); 
-      if (item.purchased) {
-        // If item is already purchased, show "Equip" or "Equipped"
-        if (item.equipped) {
-            actionButton.textContent = "Equipped";
-            actionButton.disabled = true; // Disable the button if already equipped
-            actionButton.classList.add("equipped");
-        } else {
-            actionButton.textContent = "Equip";
-            actionButton.onclick = () => equipItem(item, selectedCategory); // Equip if not equipped yet
-        }
+    if (selectedCategory === "weapons") {
+      img.style.width = "150px"; // Adjust width for weapon images
+      img.style.height = "150px"; // Adjust height for weapon images
     } else {
-        // Show "Buy" button and set the click action to purchase
-        actionButton.innerHTML = `Buy <img src="./images/coin.png" class="coin-icon" alt="coin icon"> ${item.cost}`;
-        actionButton.onclick = () => buyItem(item);
+      img.style.width = "64px"; // Default size for other items
+      img.style.height = "64px"; // Default size for other items
     }
 
-      // Append elements
-      detailsDiv.appendChild(itemName);
-      detailsDiv.appendChild(itemEffect);
-      detailsDiv.appendChild(itemCost);
-      itemDiv.appendChild(img);
-      detailsDiv.appendChild(actionButton);
-      itemDiv.appendChild(detailsDiv);
-      itemsContainer.appendChild(itemDiv);
+    const detailsDiv = document.createElement("div");
+    detailsDiv.classList.add("item-details");
+
+    const itemEffect = document.createElement("p");
+    itemEffect.classList.add("item-effect");
+    itemEffect.textContent = item.effect;
+
+    const itemCost = document.createElement("p");
+    itemCost.classList.add("item-cost");
+    itemCost.textContent = `Cost: $${item.cost}`;
+
+    // Create the button for "Buy", "Equip" or "Equipped" based on item state
+    const actionButton = document.createElement("button");
+    actionButton.classList.add("buy-button");
+    actionButton.setAttribute("data-item-name", item.name);
+    if (item.purchased) {
+      // If item is already purchased, show "Equip" or "Equipped"
+      if (item.equipped) {
+        actionButton.textContent = "Equipped";
+        actionButton.disabled = true; // Disable the button if already equipped
+        actionButton.classList.add("equipped");
+      } else {
+        actionButton.textContent = "Equip";
+        actionButton.onclick = () => equipItem(item, selectedCategory); // Equip if not equipped yet
+      }
+    } else {
+      // Show "Buy" button and set the click action to purchase
+      actionButton.innerHTML = `Buy <img src="./images/coin.png" class="coin-icon" alt="coin icon"> ${item.cost}`;
+      actionButton.onclick = () => buyItem(item);
+    }
+
+    // Append elements
+    detailsDiv.appendChild(itemName);
+    detailsDiv.appendChild(itemEffect);
+    detailsDiv.appendChild(itemCost);
+    itemDiv.appendChild(img);
+    detailsDiv.appendChild(actionButton);
+    itemDiv.appendChild(detailsDiv);
+    itemsContainer.appendChild(itemDiv);
   });
 }
 
-
 function updateStatsBars() {
-    document.getElementById("stealthBar").querySelector(".fill").style.width = (stats.stealth / MAX_STATS.stealth * 100) + "%";
-    document.getElementById("defenseBar").querySelector(".fill").style.width = (stats.defense / MAX_STATS.defense * 100) + "%";
-    document.getElementById("shootingSpeedBar").querySelector(".fill").style.width = (stats.shootingSpeed / MAX_STATS.shootingSpeed * 100) + "%";
-    document.getElementById("speedBar").querySelector(".fill").style.width = (stats.speed / MAX_STATS.speed * 100) + "%";
+  document.getElementById("stealthBar").querySelector(".fill").style.width =
+    (stats.stealth / MAX_STATS.stealth) * 100 + "%";
+  document.getElementById("defenseBar").querySelector(".fill").style.width =
+    (stats.defense / MAX_STATS.defense) * 100 + "%";
+  document
+    .getElementById("shootingSpeedBar")
+    .querySelector(".fill").style.width =
+    (stats.shootingSpeed / MAX_STATS.shootingSpeed) * 100 + "%";
+  document.getElementById("speedBar").querySelector(".fill").style.width =
+    (stats.speed / MAX_STATS.speed) * 100 + "%";
+}
+
+function buyItem(item) {
+  if (item.purchased) {
+    console.log(`${item.name} is already purchased.`);
+    equipItem(item, selectedCategory); // Equip directly if already purchased
+    return;
   }
-  
-  function buyItem(item) {
-    if (item.purchased) {
-      console.log(`${item.name} is already purchased.`);
-      equipItem(item, selectedCategory); // Equip directly if already purchased
-      return;
-  }
 
-    if (currency >= item.cost) {
-        currency -= item.cost;
-        localStorage.setItem("currency", currency);
-        document.getElementById("currencyAmount").textContent = currency;
-        alert(`You bought ${item.name} for $${item.cost}!`);
+  if (currency >= item.cost) {
+    currency -= item.cost;
+    localStorage.setItem("currency", currency);
+    document.getElementById("currencyAmount").textContent = currency;
+    alert(`You bought ${item.name} for $${item.cost}!`);
 
-        // Update stats if the item has stat bonuses
-        if (item.stealth) stats.stealth += item.stealth;
-        if (item.defense) stats.defense += item.defense;
-        if (item.shootingSpeed) stats.shootingSpeed += item.shootingSpeed;
-        if (item.speed) stats.speed += item.speed;
+    // Update stats if the item has stat bonuses
+    if (item.stealth) stats.stealth += item.stealth;
+    if (item.defense) stats.defense += item.defense;
+    if (item.shootingSpeed) stats.shootingSpeed += item.shootingSpeed;
+    if (item.speed) stats.speed += item.speed;
 
-        item.purchased = true;
-        equipItem(item, selectedCategory); // Automatically equip the item upon purchase
+    item.purchased = true;
+    equipItem(item, selectedCategory); // Automatically equip the item upon purchase
 
-        updateStatsBars();
+    updateStatsBars();
 
-        // Update the button to show "Equipped" if purchased
-        const buyButton = document.querySelector(`button[data-item-name="${item.name}"]`);
-        if (buyButton) {
-            buyButton.textContent = "Equipped";
-            buyButton.disabled = true;
-            buyButton.classList.add("equipped");
-        }
-    } else {
-        alert("Not enough money to buy this item!");
+    // Update the button to show "Equipped" if purchased
+    const buyButton = document.querySelector(
+      `button[data-item-name="${item.name}"]`
+    );
+    if (buyButton) {
+      buyButton.textContent = "Equipped";
+      buyButton.disabled = true;
+      buyButton.classList.add("equipped");
     }
+  } else {
+    alert("Not enough money to buy this item!");
+  }
 }
 
 function equipItem(item, category) {
-  // Deselect the currently equipped item in the same category
   deselectPreviousItem(category);
 
-  // Mark the item as equipped
   item.equipped = true;
-  addToInventory(item, category); // Add the item to the inventory
+  addToInventory(item, category);
 
-  // Update button to show "Equipped"
-  const equipButton = document.querySelector(`button[data-item-name="${item.name}"]`);
-  if (equipButton) {
-      equipButton.textContent = "Equipped";
-      equipButton.disabled = true; // Disable the button for the currently equipped item
-  }
-
-  // Update click box for the soldier
-  clickBoxes.forEach(box => {
-      if (box.type === category) {
-          box.updateImage(item.img.canvas ? item.img.canvas.toDataURL() : item.img.src); // Set image in the click area
-      }
+  // Update the corresponding ClickArea with the new image
+  clickBoxes.forEach((box) => {
+    if (box.type === category) {
+      box.updateImage(item.img.canvas ? item.img.canvas.toDataURL() : item.img.src);
+    }
   });
+
   characterData[category] = item.img.canvas ? item.img.canvas.toDataURL() : item.img.src;
   localStorage.setItem("characterData", JSON.stringify(characterData));
 }
 
 
-
 function deselectPreviousItem(category) {
   const itemsArray = getItemsForCategory(category);
   itemsArray.forEach((item) => {
-      if (item.equipped) {
-          item.equipped = false;
-          const button = document.querySelector(`button[data-item-name="${item.name}"]`);
-          if (button) {
-              button.textContent = "Equip";
-              button.disabled = false; // Allow re-equipping of this item
-              button.classList.remove("equipped"); // Reset styling
-          }
+    if (item.equipped) {
+      item.equipped = false;
+      const button = document.querySelector(
+        `button[data-item-name="${item.name}"]`
+      );
+      if (button) {
+        button.textContent = "Equip";
+        button.disabled = false; // Allow re-equipping of this item
+        button.classList.remove("equipped"); // Reset styling
       }
+    }
   });
 }
 
 function addToInventory(item, category) {
   console.log(`Adding item to inventory: ${item.name} in category ${category}`);
-  
+
   let categoryDiv;
 
   switch (category) {
@@ -380,7 +517,7 @@ function addToInventory(item, category) {
 
     // Add item image to inventory
     const img = document.createElement("img");
-    img.src = item.img.canvas ? item.img.canvas.toDataURL() : item.img.src; 
+    img.src = item.img.canvas ? item.img.canvas.toDataURL() : item.img.src;
     img.alt = item.name;
     img.style.width = "50px";
     img.style.height = "50px";
@@ -398,8 +535,6 @@ function addToInventory(item, category) {
     categoryDiv.appendChild(itemDiv);
   }
 }
-
-
 
 // Create and display navigation arrows
 function displayNavigationArrows() {
@@ -440,16 +575,15 @@ function getItemsForCategory(category) {
 }
 function equipItemOnSoldier(item, category) {
   selectedImg = item.img;
-  characterData[category] = item.img; // Save the p5.Image object directly for use
+  characterData[category] = item.img; // Store the p5.Image object directly
 
-  // Update the image on the correct clickBox
-  clickBoxes.forEach(box => {
+  // Update the image on the corresponding ClickArea
+  clickBoxes.forEach((box) => {
     if (box.type === category) {
-      box.updateImage(item.img); // Pass p5.Image to updateImage
+      box.updateImage(item.img); // Pass p5.Image directly to updateImage
     }
   });
 
-  // Save character data for persistence
   localStorage.setItem("characterData", JSON.stringify(characterData));
 }
 
@@ -460,44 +594,60 @@ class ClickAreas {
     this.width = width;
     this.height = height;
     this.type = type;
+    this.img = null; // Initialize without an image
 
-    // Load the equipped image if already in characterData
-    this.img = characterData[this.type] ? loadImage(characterData[this.type]) : null;
-  
+    // Load existing image if saved
+    if (characterData[this.type]) {
+      this.img = loadImage(characterData[this.type]);
+    }
   }
-
-  // Check if a click is within this area
   checkClick() {
-    if (mouseX > this.x - this.width / 2 && mouseX < this.x + this.width / 2 &&
-        mouseY < this.y + this.height / 2 && mouseY > this.y - this.height / 2) {
+    // Example check-click function
+    if (
+      mouseX > this.x - this.width / 2 &&
+      mouseX < this.x + this.width / 2 &&
+      mouseY > this.y - this.height / 2 &&
+      mouseY < this.y + this.height / 2
+    ) {
       selectedCategory = this.type;
-      
-      displayStore(); // Show items from the selected category
+      displayStore();
     }
   }
 
-  // Display equipped item image or an outline for debugging
   display() {
     if (this.img) {
       imageMode(CENTER);
-      image(this.img, this.x, this.y, this.width, this.height); // Draw the equipped item
+      push();
+      translate(this.x, this.y);
+      if (this.type === "weapons") {
+        rotate(PI / 2); // Rotate if weapon
+      }
+      image(this.img, 0, 0, this.width, this.height);
+      pop();
     } else {
-      // Draw red outline if no image is equipped
-      noFill();
+      // Draw outline if no image
+      fill(255, 0,0);
       stroke(255, 0, 0);
       rectMode(CENTER);
       rect(this.x, this.y, this.width, this.height);
     }
   }
 
-  // Update image for the click area when a new item is equipped
   updateImage(img) {
-    this.img = img;
-    characterData[this.type] = img; // Save to character data for persistence
+    if (typeof img === "string") {
+      this.img = loadImage(img); // Load from a URL or base64 string if available
+    } else if (img instanceof p5.Image) {
+      // Convert p5.Image to base64 using a hidden canvas
+      const base64String = img.canvas.toDataURL();
+      this.img = img; // Keep the p5.Image for display
+      characterData[this.type] = base64String; // Store base64 in localStorage
+    } else {
+      console.warn("Unrecognized image type:", img);
+    }
     localStorage.setItem("characterData", JSON.stringify(characterData));
-    console.log(`Updated ${this.type} with image: ${img}`); 
   }
+  
+  
 }
-
 
 localStorage.clear();
