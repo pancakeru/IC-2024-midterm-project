@@ -1,30 +1,15 @@
 <!DOCTYPE html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <link rel="stylesheet" href="style.css">
-
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
     <title>Customization</title>
-</head>
+  </head>
 <body>
-    <h1>This is the Customization Page</h1>
-    <p>Click on different sections of the character to purchase gear for the upcoming fight. <br>When ready, press the button to start combat.</p>
-
-<div id="container">
-    <div id="game">
-        <iframe id="gameframe" src="storesketch.html" scrolling="no"></iframe>
-
-    </div>
-
-    <div id="store">
-
-    </div>
-</div>
-
-    <button id="ready" onclick="window.location.href='../maingame/index.html'">Ready for Combat</button>
 
 
+  <iframe id="gameframe" src="storesketch.html"></iframe>
     <script>
         const iFrameRef = document.getElementById("gameframe");
 
@@ -32,5 +17,5 @@
             iFrameRef.contentWindow.itemSelected(path);
         }
     </script>
-
 </body>
+</html>
