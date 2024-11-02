@@ -6,31 +6,81 @@ let bullets = [];
 let frameDelay = 0;
 let fireSpeed = 5;
 let autoFire = -1;
+let sandTile, soldier;
+let cols, rows;
+let spriteSheet;
+let frameWidth = 200; // Width of each frame in the sprite sheet
+let frameHeight = 200; // Height of each frame in the sprite sheet
+let currentFrame = 0;
+let totalFrames = 6;
+let animationSpeed = 10; // Adjust to control animation speed
+let idleFrames = [];
+let moveFrames = [];
+let shootFrames = [];
+let reloadFrames = [];
+let attackFrames = [];
 let enemies = [];
-let grid = [];
+let bulletImg;
 
+function preload() {
+    sandTile = loadImage("./assets/Sand _2.jpg");
+    skeletonSpriteIdle = loadImage("./assets/enemies/Skeleton/Skeleton_Idle.png");
+    goblinImg = loadImage("./assets/enemies/goblinsword.png");
+    golemImg = loadImage("./assets/enemies/golem-walk.png");
+    bulletImg = loadImage("./assets/bullet.png");
+
+    for (let i = 0; i <= 19; i++) {
+        idleFrames.push(
+            loadImage(
+                `./assets/Top_Down_Survivor/handgun/idle/survivor-idle_handgun_${i}.png`
+            )
+        );
+    }
+    for (let i = 0; i <= 14; i++) {
+        attackFrames.push(
+            loadImage(
+                `./assets/Top_Down_Survivor/handgun/meleeattack/survivor-meleeattack_handgun_${i}.png`
+            )
+        );
+    }
+
+    for (let i = 0; i <= 19; i++) {
+        moveFrames.push(
+            loadImage(
+                `./assets/Top_Down_Survivor/handgun/move/survivor-move_handgun_${i}.png`
+            )
+        );
+    }
+    for (let i = 0; i <= 2; i++) {
+        shootFrames.push(
+            loadImage(
+                `./assets/Top_Down_Survivor/handgun/shoot/survivor-shoot_handgun_${i}.png`
+            )
+        );
+    }
+    for (let i = 0; i <= 14; i++) {
+        shootFrames.push(
+            loadImage(
+                `./assets/Top_Down_Survivor/handgun/reload/survivor-reload_handgun_${i}.png`
+            )
+        );
+    }
+}
 function setup() {
     createCanvas(400, 400);
-    perlinGraphics = createGraphics(1600, 1600);
-    watergraphics = createGraphics(2000, 2000);
-    watergraphics.fill(128, 130, 250);
-    watergraphics.noStroke();
-    watergraphics.rect(0, 0, 2000, 2000);
+    perlinGraphics = createGraphics(1600, 1600); // create scrolling perlin noise canvas 
+    watergraphics = createGraphics(2000, 2000); // create water border
+    watergraphics.fill(128, 130, 250); // water border color
+    watergraphics.rect(0, 0, 2000, 2000); // fill it with water
+    image(watergraphics, 0, 0); // show water border
+
+    // start the player in the center of the perlinGraphics
     scrollX = (perlinGraphics.width - width) / 2 + 10;
     scrollY = (perlinGraphics.height - height) / 2 + 10;
     perlinBG();
     perlinGraphics.fill(0);
-    perlinGraphics.noStroke();
-    perlinGraphics.rect(
-        perlinGraphics.width / 2 - tileSize,
-        perlinGraphics.height / 2 - tileSize,
-        tileSize * 3,
-        tileSize * 3
-    );
-
-    for (let i = 0; i < 5; i++) {
-        enemies.push(new Enemy());
-    }
+    // create a starting black 3x3 for player spawn
+    perlinGraphics.rect(perlinGraphics.width / 2 - tileSize, perlinGraphics.height / 2 - tileSize, tileSize * 3, tileSize * 3);
 }
 
 function draw() {
@@ -130,13 +180,13 @@ class Bullet {
         this.y = this.bulletPos.y;
         for (let i = enemies.length - 1; i >= 0; i--) {
             let enemy = enemies[i];
-            
+
             // Check if the distance between the bullet and enemy is less than 3
             if (this.bulletPos.copy().sub(enemy.position).mag() < 10) {
                 enemies.splice(i, 1); // Remove the enemy from the array by index
             }
         }
-}
+    }
 }
 
 function keyPressed() {
@@ -165,8 +215,8 @@ class Enemy {
         // all code above is currently placeholder
         // initalize variables
         this.velocity = createVector(0, 0);
-        this.maxSpeed = 5.0; 
-        this.maxForce = 0.1; 
+        this.maxSpeed = 5.0;
+        this.maxForce = 0.1;
         this.path = [];
         this.currentStep = 0;
         this.lastCalculation = 0;
@@ -200,7 +250,7 @@ class Enemy {
         // call follow path
         this.followPath();
     }
-// gpt
+    // gpt
     followPath() {
         if (this.path.length > 0 && this.currentStep < this.path.length) {
             let nextNode = this.path[this.currentStep];
@@ -221,7 +271,7 @@ class Enemy {
             this.seek(playerPos);
         }
     }
-// gpt
+    // gpt
     seek(target) {
         let desired = p5.Vector.sub(target, this.position);
         let distance = desired.mag();
