@@ -1,0 +1,19 @@
+
+h1 {
+    text-align: center;
+    margin-top: 10%;
+    font-size: 60px;
+}
+
+p {
+    text-align: center;
+    font-size: 22px;
+}
+
+button {
+    display: block;
+    padding: 10px 20px;       
+    font-size: 30px;           
+    margin-top: 40px;   
+    margin: 0 auto;
+}
