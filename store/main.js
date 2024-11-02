@@ -59,6 +59,7 @@ function SaveCharData() {
     characterData,
     stats,
     currency,
+    selectedCategory,
     itemsData // Save the state of all items
   };
 
@@ -255,12 +256,13 @@ function LoadCharData() {
         }
       });
     }
-
+    selectedCategory = data.selectedCategory || 'hats';
     document.getElementById("currencyAmount").textContent = currency;
     updateStatsBars();
     displayInventory();
   } else {
     console.log("No saved data found. Initializing with default values.");
+    selectedCategory = 'hats';
     currency = 500;
     SaveCharData();
   }
@@ -383,9 +385,9 @@ function setup() {
     "armor"
   );
   bootsArea = new ClickAreas(
-    width / 4 - 255,
-    height / 2 + 295,
-    10,
+    width / 4 - 260,
+    height / 2 + 285,
+    180,
     140,
     "boots"
   );
@@ -470,6 +472,7 @@ function switchCategory(direction) {
   }
 
   displayStore();
+  SaveCharData()
 }
 
 // // Function to display currency amount
