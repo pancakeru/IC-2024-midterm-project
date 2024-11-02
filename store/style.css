@@ -24,6 +24,7 @@ body {
 h1 {
   margin-top: 20px;
   color: #f8c471;
+  font-family: "Metal Mania", sans-serif;
 }
 
 .shop-container {
@@ -45,7 +46,6 @@ h1 {
 .navigation {
   display: flex;
   justify-content: center;
-  margin-top: 20px;
   justify-content: space-between;
 }
 #itemsContainer {
@@ -61,46 +61,11 @@ h1 {
 }
 
 
-#ready {
-  align-items: center;
-  margin: 0;
-  appearance: none;
-  background-color: #d38b5d;
-  border-radius: 24px;
-  border-style: none;
-  box-shadow: rgba(0, 0, 0, 0.2) 0 3px 5px -1px,
-    rgba(0, 0, 0, 0.14) 0 6px 10px 0, rgba(0, 0, 0, 0.12) 0 1px 18px 0;
-  box-sizing: border-box;
-  color: white;
-  cursor: pointer;
-  display: inline-flex;
-  fill: currentcolor;
-  font-family: "Google Sans", Roboto, Arial, sans-serif;
-  font-size: 1.4rem;
-  font-weight: 500;
-  height: 32px;
-  justify-content: center;
-  letter-spacing: 0.25px;
-  line-height: normal;
-  max-width: 100%;
-  overflow: visible;
-  padding: 2px 24px;
-  position: relative;
-  text-align: center;
-  text-transform: none;
-  transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1),
-    opacity 15ms linear 30ms, transform 270ms cubic-bezier(0, 0, 0.2, 1) 0ms;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-  /* width: 100%; */
-  will-change: transform, opacity;
-  z-index: 0;
-}
+
 
 #ready:hover {
-  background: #f6f9fe;
-  color: #c3724e;
+  background: #c3724e;
+  color: white;
 }
 
 #ready:active {
@@ -244,7 +209,7 @@ iframe {
 }
 
 .buy-button:hover {
-  background: #f6f9fe;
+  background: #c3724e;
   color: white;
 }
 
@@ -268,7 +233,7 @@ iframe {
 .buy-button:not(:disabled):hover {
   box-shadow: rgba(60, 64, 67, 0.3) 0 2px 3px 0,
     rgba(60, 64, 67, 0.15) 0 6px 10px 4px;
-    color: black;
+    color: white;
 }
 
 .buy-button:not(:disabled):focus {
@@ -303,6 +268,7 @@ canvas {
     flex: 1 2;
     top: 50%;
     left: 50%;
+    width: 100vw;
     transform: translate(-50%, -50%);
 }
 
@@ -336,42 +302,72 @@ canvas {
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding: 20px;
-
+  padding: 20px 10px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   font-family: "Metal Mania", sans-serif;
-  color: #8b5e3c;
+  color: #ffffff;
+  background-color: #c6ac8f;
+  margin-bottom: 1.2rem;
 }
 .currency-display {
-  font-size: 24px;
+  font-size: 2rem;
   font-weight: bold;
   text-align: center;
+  margin-left: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
 }
 
-#currencyAmount {
-
+.currency-display img {
+  width: 70px;
+  height: 50px;
+  margin-right: 10px;
 }
+
+
+
 .ready-button {
-  background-color: #8e8268;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  cursor: pointer;
+  align-items: center;
+  background-color: transparent;
+  border: 2px solid rgba(0, 0, 0, 0.2);
   border-radius: 5px;
-  transition: background-color 0.3s ease;
-}
+  box-shadow: rgba(0, 0, 0, 0.02) 0 1px 3px 0;
+  box-sizing: border-box;
+  color: #32190f;
+  cursor: pointer;
+  display: inline-flex;
+  font-family: system-ui,-apple-system,system-ui,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  justify-content: center;
+  line-height: 1.25;
+  margin: 0;
+  margin-right: 1rem;
+  min-height: 3rem;
+  padding: calc(.875rem - 1px) calc(1.5rem - 1px);
+  position: relative;
+  text-decoration: none;
+  transition: all 250ms;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: baseline;
+  width: auto;}
+
 
 .ready-button:hover {
-  background-color: #a89276;
+  background-color: #c3724e;
+  color: white;
 }
 
 .ready-button:active {
   background-color: #7a6953;
 }
 .nav-arrow:hover {
-  background-color: #666;
+  background-color: #c3724e;
+  color: white;
 }
 
 .shop-header{
@@ -413,37 +409,44 @@ canvas {
   }
   
   .character {
+    position: relative; /* Add this to position child elements absolutely within this container */
     width: 100%;
     height: 80%;
     display: flex;
-    justify-content: center; /* Centers the image horizontally */
-    align-items: center; /* Centers the image vertically */
+    justify-content: center;
+    align-items: center;
     border: 10px ridge #d3b8ae;
-    background-image: url('./images/drawing-desert-with-landscape-background_889056-167277.avif'); 
-  background-size: cover; /* Adjusts the image to cover the entire div */
-  background-attachment: fixed;
-  background-size: 100% 100%;
-  background-repeat: no-repeat
-}
-
-#character img {
+    background-image: url('./images/drawing-desert-with-landscape-background_889056-167277.avif');
+    background-size: cover;
+    background-repeat: no-repeat;
+    gap: 1rem;
+  }
+  
+  #characterContainer img {
     max-width: 100%;
     height: auto;
-    position: relative; /* Positioned absolutely within the `.character` div */
-    top: 50%; /* Center vertically */
-    left: 50%; /* Center horizontally */
-    transform: translate(-50%, -50%); /* Center image precisely */
-    z-index: 1; /* Ensure it’s below equipped items */
-}
-
-#equippedItemsContainer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 2; /* Equip items to display above the soldier */
-  pointer-events: none; /* So items don't interfere with other interactions */
-}
-
+    position: relative; /* Keep this relative */
+    z-index: 1; /* Ensure it’s below the canvas and equipped items */
+  }
+  
+  #equippedItemsContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 3; /* Higher than the canvas */
+    pointer-events: none; /* So items don't interfere with clicks */
+  }
+  .category-name{
+    margin-top: 1rem;
+  }
+  
+  canvas {
+    position: absolute; /* Position the canvas absolutely within the container */
+    top: 0;
+    left: 0;
+    z-index: 2; /* Between the soldier image and equipped items */
+  }
+  
 .character-cont{
     display: flex;
     flex-direction: column;
@@ -478,8 +481,12 @@ canvas {
   width: 80%; */
   margin: 10px auto; /* Center the inventory */
   height: 75%;
+  overflow: auto;
+  
   
 }
+
+
 .inventory-container {
   display: flex;
   /* flex-wrap: wrap; */
@@ -511,6 +518,7 @@ justify-content: space-evenly;
   /* border: #d3b8ae 1px solid;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
   height: 70%;
+  margin: 1rem;
 }
 
 .inventory-item img {
@@ -548,6 +556,8 @@ h1 em {
   text-align: center;
   text-transform: uppercase;
   padding-bottom: 5px;
+  font-family: "Metal Mania", sans-serif;
+  font-size: 2rem;
 }
 .one h1:before {
   width: 28px;
@@ -558,7 +568,7 @@ h1 em {
   bottom: 3px;
   left: 50%;
   margin-left: -14px;
-  background-color: #b80000;
+  background-color: #c3724e;
 }
 .one h1:after {
   width: 100px;
@@ -569,7 +579,7 @@ h1 em {
   margin-top: 25px;
   left: 50%;
   margin-left: -50px;
-  background-color: #b80000;
+  background-color: #c3724e;
 }
 .shop-inventory{
     display: flex;
@@ -597,6 +607,7 @@ h1 em {
   color: #333;
   margin-bottom: 5px;
   font-family: "Metal Mania", sans-serif;
+  margin: 0;
 }
 
 /* .inventory-item img {

@@ -7,6 +7,7 @@ let weaponsArr = [];
 let weapons = [];
 let boots = [];
 let gloves = [];
+let canvas;
 let inventory = [];
 let stats = {
   stealth: 0, // Initial stealth level
@@ -27,8 +28,9 @@ let selectedPath = null;
 let hatArea, armorArea, weaponArea, bootsArea;
 // Variables for tracking the selected category
 let selectedCategory = "hats";
-let currency=500;
+let currency = 500;
 let characterImg;
+
 function preload() {
   spriteSheet = loadImage("./images/armour.png");
   characterImg = loadImage("./images/character.png");
@@ -39,38 +41,10 @@ function preload() {
   weaponsArr[4] = loadImage("./images/weapons/USI_full.png");
 }
 
-function SaveCharData() {
-
-
-  // Collect all items into one array
-  const allItems = [...hats, ...armor, ...weapons, ...boots];
-
-  // Map over all items to save their state
-  const itemsData = allItems.map(item => {
-    return {
-      id: item.id,
-      category: item.category,
-      purchased: item.purchased,
-      equipped: item.equipped
-    };
-  });
-
-  const data = {
-    characterData,
-    stats,
-    currency,
-    selectedCategory,
-    itemsData // Save the state of all items
-  };
-
-  localStorage.setItem("gameData", JSON.stringify(data));
-  console.log("Data saved to localStorage:", data);
-}
-
 function loadItemsFromSpriteSheet() {
   hats = [
     {
-      id: 'hat0',
+      id: "hat0",
       img: extractItem(0, 1),
       category: "hats",
       name: "Shadow Hood",
@@ -78,7 +52,8 @@ function loadItemsFromSpriteSheet() {
       stealth: 10,
       cost: 15,
     },
-    {id: 'hat1',
+    {
+      id: "hat1",
       img: extractItem(0, 2),
       category: "hats",
       name: "Hunter's Cap",
@@ -86,7 +61,8 @@ function loadItemsFromSpriteSheet() {
       stealth: 20,
       cost: 25,
     },
-    {id: 'hat2',
+    {
+      id: "hat2",
       img: extractItem(0, 3),
       category: "hats",
       name: "Knight's Helm",
@@ -94,7 +70,8 @@ function loadItemsFromSpriteSheet() {
       stealth: 30,
       cost: 35,
     },
-    {id: 'hat3',
+    {
+      id: "hat3",
       img: extractItem(0, 4),
       category: "hats",
       name: "Mystic Crown",
@@ -105,7 +82,8 @@ function loadItemsFromSpriteSheet() {
   ];
 
   armor = [
-    {id: 'armor0',
+    {
+      id: "armor0",
       img: extractItem(1, 0),
       category: "armor",
       name: "Leather Vest",
@@ -113,15 +91,17 @@ function loadItemsFromSpriteSheet() {
       defense: 10,
       cost: 20,
     },
-    {id: 'armor1',
+    {
+      id: "armor1",
       img: extractItem(1, 1),
-      category: "armou",
+      category: "armor",
       name: "Chainmail",
       effect: "+20 Defense",
       defense: 20,
       cost: 40,
     },
-    {id: 'armor2',
+    {
+      id: "armor2",
       img: extractItem(1, 2),
       category: "armor",
       name: "Plate Armor",
@@ -129,7 +109,8 @@ function loadItemsFromSpriteSheet() {
       defense: 30,
       cost: 60,
     },
-    {id: 'armor3',
+    {
+      id: "armor3",
       img: extractItem(1, 3),
       category: "armor",
       name: "Dragon Armor",
@@ -137,7 +118,8 @@ function loadItemsFromSpriteSheet() {
       defense: 40,
       cost: 80,
     },
-    {id: 'armor4',
+    {
+      id: "armor4",
       img: extractItem(1, 4),
       category: "armor",
       name: "Titanium Suit",
@@ -148,7 +130,8 @@ function loadItemsFromSpriteSheet() {
   ];
 
   weapons = [
-    {id: 'weapon0',
+    {
+      id: "weapon0",
       img: weaponsArr[0],
       category: "weapons",
       name: "Steel Fang",
@@ -156,7 +139,8 @@ function loadItemsFromSpriteSheet() {
       damage: 5,
       cost: 20,
     },
-    {id: 'weapon01',
+    {
+      id: "weapon01",
       img: weaponsArr[1],
       category: "weapons",
       name: "Viper Strike",
@@ -164,7 +148,8 @@ function loadItemsFromSpriteSheet() {
       damage: 10,
       cost: 35,
     },
-    {id: 'weapon2',
+    {
+      id: "weapon2",
       img: weaponsArr[2],
       category: "weapons",
       name: "Nightfall",
@@ -172,7 +157,8 @@ function loadItemsFromSpriteSheet() {
       damage: 20,
       cost: 50,
     },
-    {id: 'weapon3',
+    {
+      id: "weapon3",
       img: weaponsArr[3],
       category: "weapons",
       name: "Thunderbolt",
@@ -180,7 +166,8 @@ function loadItemsFromSpriteSheet() {
       damage: 15,
       cost: 65,
     },
-    {id: 'weapon4',
+    {
+      id: "weapon4",
       img: weaponsArr[4],
       category: "weapons",
       name: "Dragon's Fury",
@@ -191,7 +178,8 @@ function loadItemsFromSpriteSheet() {
   ];
 
   boots = [
-    {id: 'boots0',
+    {
+      id: "boots0",
       img: extractItem(4, 0),
       category: "boots",
       name: "Sandals",
@@ -199,7 +187,8 @@ function loadItemsFromSpriteSheet() {
       speed: 10,
       cost: 10,
     },
-    {id: 'boots1',
+    {
+      id: "boots1",
       img: extractItem(4, 1),
       category: "boots",
       name: "Leather Boots",
@@ -207,7 +196,8 @@ function loadItemsFromSpriteSheet() {
       speed: 20,
       cost: 20,
     },
-    {id: 'boots2',
+    {
+      id: "boots2",
       img: extractItem(4, 2),
       category: "boots",
       name: "Winged Boots",
@@ -215,7 +205,8 @@ function loadItemsFromSpriteSheet() {
       speed: 30,
       cost: 40,
     },
-    {id: 'boots3',
+    {
+      id: "boots3",
       img: extractItem(4, 3),
       category: "boots",
       name: "Rocket Boots",
@@ -223,7 +214,8 @@ function loadItemsFromSpriteSheet() {
       speed: 40,
       cost: 60,
     },
-    {id: 'boots4',
+    {
+      id: "boots4",
       img: extractItem(4, 4),
       category: "boots",
       name: "Sonic Boots",
@@ -233,219 +225,64 @@ function loadItemsFromSpriteSheet() {
     },
   ];
 }
-function LoadCharData() {
-
-  const dataString = localStorage.getItem("gameData");
-
-  if (dataString) {
-    const data = JSON.parse(dataString);
-    console.log("Parsed data:", data);
-
-    characterData = data.characterData || characterData;
-    stats = data.stats || stats;
-    currency = data.currency !== undefined ? data.currency : 500;
-
-    // Restore item states
-    if (data.itemsData) {
-      const allItems = [...hats, ...armor, ...weapons, ...boots];
-      data.itemsData.forEach(savedItem => {
-        const item = allItems.find(i => i.id === savedItem.id);
-        if (item) {
-          item.purchased = savedItem.purchased;
-          item.equipped = savedItem.equipped;
-        }
-      });
-    }
-    selectedCategory = data.selectedCategory || 'hats';
-    document.getElementById("currencyAmount").textContent = currency;
-    updateStatsBars();
-    displayInventory();
-  } else {
-    console.log("No saved data found. Initializing with default values.");
-    selectedCategory = 'hats';
-    currency = 500;
-    SaveCharData();
-  }
-}
-
-
-
-
 
 function setup() {
-  console.log("Setup function is running...");
-  createCanvas(windowWidth, windowHeight);
-  // Check if LoadCharData is defined before calling it
-  // function SaveCharData() {
-  //   console.log("SaveCharData function is running...");
-  //   if (currency === undefined) {
-  //     console.warn("Currency is undefined; setting to 0.");
-  //     currency = 0;
-  //   }
-  //   const inventoryData = inventory.map((item) => {
-  //     const imgSrc = item.img?.canvas
-  //       ? item.img.canvas.toDataURL()
-  //       : item.img?.src;
-  //     return {
-  //       category: item.category,
-  //       name: item.name,
-  //       cost: item.cost,
-  //       effect: item.effect,
-  //       imgSrc: imgSrc,
-  //     };
-  //   });
+  const characterContainer = document.getElementById('characterContainer');
+  const containerWidth = characterContainer.offsetWidth;
+  const containerHeight = characterContainer.offsetHeight;
 
-  //   const data = {
-  //     characterData,
-  //     stats,
-  //     currency,
-  //     inventory: inventoryData,
-  //   };
 
-  //   localStorage.setItem("gameData", JSON.stringify(data));
-  //   console.log("Data saved to localStorage:", data);
+  canvas = createCanvas(containerWidth, containerHeight);
+  canvas.parent('characterContainer');
+  canvas.position(0, 0);
+  canvas.style('position', 'absolute');
+  canvas.style('top', '0');
+  canvas.style('left', '0');
+  canvas.style('z-index', '2'); 
 
-  //   if (!currency) {
-  //     console.log("no currency");
-  //   }
-  //   console.log("cuurency", currency);
-  // }
 
-  // function LoadCharData() {
-  //   console.log("Attempting to load character data...");
-  //   const data = JSON.parse(localStorage.getItem("gameData"));
-  //   if (data) {
-  //     console.log("Loaded data from localStorage:", data);
-
-  //     characterData = data.characterData || characterData;
-  //     stats = data.stats || stats;
-  //     currency = data.currency !== undefined ? data.currency : 500;
-  //     console.log("Loaded currency:", currency);
-  //     document.getElementById("currencyAmount").textContent = currency;
-
-  //     inventory = [];
-
-  //     const loadImagePromises = data.inventory.map((item) => {
-  //       return new Promise((resolve) => {
-  //         loadImage(
-  //           item.imgSrc,
-  //           (loadedImage) => {
-  //             resolve({
-  //               ...item,
-  //               img: loadedImage,
-  //             });
-  //           },
-  //           () => {
-  //             console.warn("Failed to load image for item:", item.name);
-  //             resolve({
-  //               ...item,
-  //               img: null,
-  //             });
-  //           }
-  //         );
-  //       });
-  //     });
-
-  //     Promise.all(loadImagePromises).then((loadedInventory) => {
-  //       inventory = loadedInventory;
-  //       displayInventory();
-  //     });
-
-  //     updateStatsBars();
-  //     document.getElementById("currencyAmount").textContent = currency;
-  //   } else {
-  //     console.log("No saved data found. Initializing with default currency.");
-  //     currency = 500;
-  //     SaveCharData();
-  //   }
-  // }
-  // currency = localStorage.getItem("currency");
-  // SaveCharData();
   loadItemsFromSpriteSheet();
   LoadCharData();
 
+  hatArea = new ClickAreas(width / 4 + 140, height / 2 - 260, 140, 120, "hats");
 
-  // Select elements
-  const itemsContainer = document.getElementById("itemsContainer");
-  const categoryNameDisplay = document.getElementById("categoryName");
-
-  // if (itemsContainer && categoryNameDisplay) {
-  //   displayStore(); // Display initial items
-  //   displayNavigationArrows();
-  // } else {
-  //   console.error("Error: Required DOM elements not found.");
-  // }
-
-  hatArea = new ClickAreas(width / 4 - 240, height / 2 - 170, 140, 120, "hats");
   armorArea = new ClickAreas(
-    width / 4 - 295,
-    height / 2 - 70,
+    width / 4 +130,
+    height / 2 - 100,
+    230,
     220,
-    200,
     "armor"
   );
+
   bootsArea = new ClickAreas(
-    width / 4 - 260,
-    height / 2 + 285,
-    180,
-    140,
+    width / 4 + 140,
+    height / 2 + 245,
+    185,
+    125,
     "boots"
   );
   weaponArea = new ClickAreas(
-    width / 4 - 220,
-    height / 2 + 170,
-    200,
+    width / 4 + 190,
+    height / 2 + 70,
     150,
+    200,
     "weapons"
   );
 
   // Add clickable areas to the array
   clickBoxes = [hatArea, armorArea, bootsArea, weaponArea];
-  clickBoxes.push(hatArea, armorArea, bootsArea, weaponArea);
   displayStore(selectedCategory);
   displayInventory();
 }
 
 function draw() {
-  // Draw rectangles with debugging logs
-  rectMode(CENTER);
-  fill(255, 0, 0); // Red, semi-transparent for visibility
 
-  // rect(width / 4 -80, height / 2 - 120, 100, 50); // Hat area
-  // Update and display equipped items in clickBoxes
-  // Create the soldier image element
-  // if (!document.getElementById("character")) {
-  //   let characterImgEL = document.createElement("img");
-  //   characterImgEL.src = characterImg.canvas.toDataURL(); // Convert p5.Image to base64
-  //   characterImgEL.id = "character";
-  //   characterImgEL.style.maxWidth = "100%";
-  //   characterImgEL.style.height = "auto";
-  //   characterImgEL.style.position = "absolute";
+  clear()
+  // rectMode(CENTER);
+  // fill(255, 0, 0); 
 
-  //   // Append it to the character container
-  //   let characterDiv = document.getElementById("characterContainer");
-  //   characterDiv.appendChild(characterImgEL);
-  // }
-  let equippedItemsContainer = document.getElementById(
-    "equippedItemsContainer"
-  );
-  equippedItemsContainer.innerHTML = ""; // Clear previous items to prevent stacking duplicates
-
-  // Loop through each equipped item and add to the equipped items container
   clickBoxes.forEach((box) => {
-    if (box.img) {
-      let equippedImg = document.createElement("img");
-      equippedImg.src = box.img.canvas.toDataURL(); // Convert to base64
-      equippedImg.style.position = "absolute";
-      equippedImg.style.left = `${box.x}px`; // Position item according to box coordinates
-      equippedImg.style.top = `${box.y}px`;
-      equippedImg.style.width = `${box.width}px`;
-      equippedImg.style.height = `${box.height}px`;
-      equippedImg.style.transform =
-        box.type === "weapons" ? "rotate(90deg)" : ""; // Rotate weapon if needed
-
-      equippedItemsContainer.appendChild(equippedImg); // Add to equipped items container
-    }
+    box.display();
   });
 }
 
@@ -472,7 +309,7 @@ function switchCategory(direction) {
   }
 
   displayStore();
-  SaveCharData()
+  SaveCharData();
 }
 
 // // Function to display currency amount
@@ -489,8 +326,6 @@ const MAX_STATS = {
   shootingSpeed: 100,
   speed: 100,
 };
-
-
 
 // Extract specific item from the sprite sheet
 function extractItem(col, row) {
@@ -519,8 +354,8 @@ function displayStore() {
     return;
   }
 
-  itemsContainer.innerHTML = ""; // Clear the current items
-  categoryNameDisplay.textContent = capitalize(selectedCategory); // Display the selected category
+  itemsContainer.innerHTML = ""; 
+  categoryNameDisplay.textContent = capitalize(selectedCategory); 
 
   let itemsArray = getItemsForCategory(selectedCategory);
   itemsArray.forEach((item) => {
@@ -584,7 +419,6 @@ function displayStore() {
   });
 }
 
-
 function updateStatsBars() {
   document.getElementById("stealthBar").querySelector(".fill").style.width =
     (stats.stealth / MAX_STATS.stealth) * 100 + "%";
@@ -601,7 +435,7 @@ function updateStatsBars() {
 function buyItem(item) {
   if (item.purchased) {
     console.log(`${item.name} is already purchased.`);
-    equipItem(item, selectedCategory); 
+    equipItem(item, selectedCategory);
     return;
   }
 
@@ -641,8 +475,6 @@ function equipItem(item, category) {
   deselectPreviousItem(category);
 
   item.equipped = true;
-
-  // Update the corresponding ClickArea with the new image
   clickBoxes.forEach((box) => {
     if (box.type === category) {
       box.updateImage(
@@ -676,7 +508,6 @@ function deselectPreviousItem(category) {
   SaveCharData();
 }
 
-
 function addToInventory(item, category) {
   console.log(`Adding item to inventory: ${item.name} in category ${category}`);
 
@@ -703,7 +534,7 @@ function addToInventory(item, category) {
   console.log(`Category div found: ${categoryDiv ? "Yes" : "No"}`);
 
   if (categoryDiv) {
-    // Remove the previous item, but keep the <h3> header
+    
     const previousItem = categoryDiv.querySelector(".inventory-item");
     if (previousItem) {
       previousItem.remove();
@@ -717,8 +548,13 @@ function addToInventory(item, category) {
     const img = document.createElement("img");
     img.src = item.img.canvas ? item.img.canvas.toDataURL() : item.img.src;
     img.alt = item.name;
-    img.style.width = "50px";
-    img.style.height = "50px";
+    img.style.width = "80px";
+    img.style.height = "80px";
+
+    if (img.categoryDiv === "weapons") {
+      img.style.width = "140px";
+      img.style.height = "140px";
+    }
     itemDiv.appendChild(img);
 
     // Add item name
@@ -731,58 +567,64 @@ function addToInventory(item, category) {
 
     // Append the new item div to the category container
     categoryDiv.appendChild(itemDiv);
-    SaveCharData()
+    SaveCharData();
   }
   SaveCharData();
 }
 // Function to display inventory items in the HTML
 function displayInventory() {
-  const armorInventoryDiv = document.getElementById("armorInventory");
-  const helmetInventoryDiv = document.getElementById("helmetInventory");
-  const weaponInventoryDiv = document.getElementById("weaponInventory");
-  const bootsInventoryDiv = document.getElementById("bootsInventory");
+  const armorInventoryItemsDiv = document.getElementById("armorInventoryItems");
+  const helmetInventoryItemsDiv = document.getElementById("helmetInventoryItems");
+  const weaponInventoryItemsDiv = document.getElementById("weaponInventoryItems");
+  const bootsInventoryItemsDiv = document.getElementById("bootsInventoryItems");
 
   // Clear existing items
-  armorInventoryDiv.innerHTML = "";
-  helmetInventoryDiv.innerHTML = "";
-  weaponInventoryDiv.innerHTML = "";
-  bootsInventoryDiv.innerHTML = "";
+  armorInventoryItemsDiv.innerHTML = " ";
+  helmetInventoryItemsDiv.innerHTML = " ";
+  weaponInventoryItemsDiv.innerHTML = " ";
+  bootsInventoryItemsDiv.innerHTML = " ";
 
+  
   const allItems = [...hats, ...armor, ...weapons, ...boots];
 
-  allItems.filter(item => item.equipped).forEach(item => {
-    const itemDiv = document.createElement("div");
-    itemDiv.classList.add("inventory-item");
+  allItems
+    .filter((item) => item.purchased)
+    .forEach((item) => {
+      const itemDiv = document.createElement("div");
+      itemDiv.classList.add("inventory-item");
 
-    const img = document.createElement("img");
-    img.src = item.img.canvas ? item.img.canvas.toDataURL() : item.img.src; // Use the item's image
-    img.alt = item.name;
-    img.style.width = "50px";
-    img.style.height = "50px";
-    itemDiv.appendChild(img);
+      const img = document.createElement("img");
+      img.src = item.img.canvas.toDataURL();
+      img.alt = item.name;
+      img.style.width = "50px";
+      img.style.height = "50px";
+      itemDiv.appendChild(img);
 
-    const itemName = document.createElement("p");
-    itemName.textContent = item.name;
-    itemDiv.appendChild(itemName);
+      const itemName = document.createElement("p");
+      itemName.textContent = item.name;
+      itemDiv.appendChild(itemName);
 
-    // Append to the correct inventory category
-    switch (item.category) {
-      case "armor":
-        armorInventoryDiv.appendChild(itemDiv);
-        break;
-      case "hats":
-        helmetInventoryDiv.appendChild(itemDiv);
-        break;
-      case "weapons":
-        weaponInventoryDiv.appendChild(itemDiv);
-        break;
-      case "boots":
-        bootsInventoryDiv.appendChild(itemDiv);
-        break;
-      default:
-        console.warn("Unknown item category:", item);
-    }
-  });
+
+      itemDiv.onclick = () => equipItem(item, item.category);
+
+      // Append to the correct inventory category
+      switch (item.category) {
+        case "armor":
+          armorInventoryItemsDiv.appendChild(itemDiv);
+          break;
+        case "hats":
+          helmetInventoryItemsDiv.appendChild(itemDiv);
+          break;
+        case "weapons":
+          weaponInventoryItemsDiv.appendChild(itemDiv);
+          break;
+        case "boots":
+          bootsInventoryItemsDiv.appendChild(itemDiv);
+          break;
+        default:
+          console.warn("Unknown item category:", item);
+      }
+    });
 }
 
 // Create and display navigation arrows
@@ -824,12 +666,12 @@ function getItemsForCategory(category) {
 }
 function equipItemOnSoldier(item, category) {
   selectedImg = item.img;
-  characterData[category] = item.img; // Store the p5.Image object directly
+  characterData[category] = item.img; 
 
   // Update the image on the corresponding ClickArea
   clickBoxes.forEach((box) => {
     if (box.type === category) {
-      box.updateImage(item.img); // Pass p5.Image directly to updateImage
+      box.updateImage(item.img); 
     }
   });
 
@@ -844,13 +686,14 @@ class ClickAreas {
     this.width = width;
     this.height = height;
     this.type = type;
-    this.img = null; // Initialize without an image
+    this.img = null;
 
     // Load existing image if saved
     if (characterData[this.type]) {
       this.img = loadImage(characterData[this.type]);
     }
   }
+
   checkClick() {
     if (
       mouseX > this.x - this.width / 2 &&
@@ -860,6 +703,7 @@ class ClickAreas {
     ) {
       selectedCategory = this.type;
       displayStore(selectedCategory);
+      SaveCharData();
     }
   }
 
@@ -869,18 +713,20 @@ class ClickAreas {
       push();
       translate(this.x, this.y);
       if (this.type === "weapons") {
-        rotate(PI / 2); // Rotate if weapon
+        rotate(PI / 2);
       }
       image(this.img, 0, 0, this.width, this.height);
       pop();
-    } else {
-      // Draw outline if no image
-      fill(255, 0, 0);
-      stroke(255, 0, 0);
-      rectMode(CENTER);
-      rect(this.x, this.y, this.width, this.height);
-    }
+    } 
+    // else {
+    //   // Draw outline if no image
+    //   fill(255, 0, 0, 100); // Semi-transparent for visibility
+    //   noStroke();
+    //   rectMode(CENTER);
+    //   rect(this.x, this.y, this.width, this.height);
+    // }
   }
+
   updateImage(img) {
     if (img instanceof p5.Image) {
       // Convert p5.Image to base64 string
@@ -894,8 +740,6 @@ class ClickAreas {
     } else {
       console.warn("Unrecognized image type:", img);
     }
-
-    // Save characterData to localStorage without circular references
     localStorage.setItem("characterData", JSON.stringify(characterData));
     SaveCharData();
   }

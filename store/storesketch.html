@@ -15,9 +15,10 @@
     <div id="canvasContainer">
       <div class="header">
         <div class="currency-display">
-          <span>Currency:</span> <span id="currencyAmount">$500</span>
+          <span>Currency:</span> <span id="currencyAmount" style="margin-left: .7rem;"> $500</span> <img src="./images/coin.png" />
         </div>
         <button
+        class="ready-button"
           id="ready"
           onclick="window.location.href='../maingame/index.html'"
         >
@@ -59,19 +60,24 @@
               <div class="one"><h1>Inventory</h1></div>
             </div>
             <div id="inventory">
-                <div class="inventory-category" id="armorInventory">
-                    <h3>Armor</h3>
-                  </div>
-                  <div class="inventory-category" id="helmetInventory">
-                    <h3>Helmet</h3>
-                  </div>
-                  <div class="inventory-category" id="bootsInventory">
-                    <h3>Boots</h3>
-                  </div>
-                  <div class="inventory-category" id="weaponInventory">
-                    <h3>Weapons</h3>
-                  </div>                  
-            </div>
+                <div class="inventory-category">
+                  <h3>Armor</h3>
+                  <div id="armorInventoryItems"></div>
+                </div>
+                <div class="inventory-category">
+                  <h3>Helmet</h3>
+                  <div id="helmetInventoryItems"></div>
+                </div>
+                <div class="inventory-category">
+                  <h3>Boots</h3>
+                  <div id="bootsInventoryItems"></div>
+                </div>
+                <div class="inventory-category">
+                  <h3>Weapons</h3>
+                  <div id="weaponInventoryItems"></div>
+                </div>
+              </div>
+              
           </div>
 
           <div class="shop-container">
