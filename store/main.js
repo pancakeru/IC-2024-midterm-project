@@ -244,21 +244,21 @@ function setup() {
   loadItemsFromSpriteSheet();
   LoadCharData();
 
-  hatArea = new ClickAreas(width / 4 + 140, height / 2 - 260, 140, 120, "hats");
+  hatArea = new ClickAreas(width / 4 + 130, height / 2 - 250, 150, 130, "hats");
 
   armorArea = new ClickAreas(
-    width / 4 +130,
-    height / 2 - 100,
+    width / 4 +125,
+    height / 2 - 110,
+    240,
     230,
-    220,
     "armor"
   );
 
   bootsArea = new ClickAreas(
-    width / 4 + 140,
-    height / 2 + 245,
-    185,
-    125,
+    width / 4 + 125,
+    height / 2 + 225,
+    200,
+    140,
     "boots"
   );
   weaponArea = new ClickAreas(
