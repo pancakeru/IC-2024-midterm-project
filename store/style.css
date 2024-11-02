@@ -19,11 +19,6 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* background-image: url('./images/drawing-desert-with-landscape-background_889056-167277.avif');  */
-  background-size: cover; /* Adjusts the image to cover the entire div */
-  background-attachment: fixed;
-  background-size: 100% 100%;
-  background-repeat: no-repeat
 }
 
 h1 {
@@ -417,36 +412,46 @@ canvas {
     transition: width 0.3s ease;
   }
   
-.character{
-  /* position: absolute; */
-  z-index: -999;
+  .character {
     width: 100%;
-    border: 10px ridge #d3b8ae;
     height: 80%;
     display: flex;
     justify-content: center; /* Centers the image horizontally */
     align-items: center; /* Centers the image vertically */
-
-    
+    border: 10px ridge #d3b8ae;
+    background-image: url('./images/drawing-desert-with-landscape-background_889056-167277.avif'); 
+  background-size: cover; /* Adjusts the image to cover the entire div */
+  background-attachment: fixed;
+  background-size: 100% 100%;
+  background-repeat: no-repeat
 }
 
-.character img{
-  max-width: 100%; /* Ensures the image doesn't exceed the container's width */
-  height: auto;
+#character img {
+    max-width: 100%;
+    height: auto;
+    position: relative; /* Positioned absolutely within the `.character` div */
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Center image precisely */
+    z-index: 1; /* Ensure it’s below equipped items */
+}
 
+#equippedItemsContainer {
   position: absolute;
-  /* opacity: 0.5; */
-  z-index: -999;
+  top: 0;
+  left: 0;
+  z-index: 2; /* Equip items to display above the soldier */
+  pointer-events: none; /* So items don't interfere with other interactions */
 }
 
 .character-cont{
     display: flex;
     flex-direction: column;
     width: 30vw;
-    justify-content: center;
+    /* justify-content: center; */
     align-items: center;
     margin: 0 ;
-    height: 90vh;
+    height: 80vh;
 }
 
 /* .inventory{

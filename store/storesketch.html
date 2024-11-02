@@ -3,11 +3,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/addons/p5.sound.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/addons/p5.sound.min.js"></script>
 
-    <script src="localStore.js"></script>
-    <script src="main.js"></script>
+    
+   
     <link rel="stylesheet" href="style.css" />
     
 </head>
@@ -46,9 +46,11 @@
               <div class="bar" id="speedBar"><div class="fill"></div></div>
             </div>
           </div>
-          <div class="character">
-            <img src="./images/character.png" id="character" />
+          <div id="characterContainer" class="character">
+            <img src="./images/character.png" id="characterImg" />
+            <div id="equippedItemsContainer"></div> 
           </div>
+
         </div>
 
         <div class="shop-inventory">
@@ -114,7 +116,18 @@
         </div>
       </div>
     </div>
-
+    <script>
+        function LoadCharData() {
+            console.log("LoadCharData is running");
+        }
+        function SaveCharData() {
+            console.log("SaveCharData is running");
+        }
+        LoadCharData();
+        SaveCharData();
+    </script>
+    
+    <script src="localStore.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/p5@1.11.0/lib/p5.min.js"></script>
     <script src="./main.js"></script>
   </body>
