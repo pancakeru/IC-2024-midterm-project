@@ -1,13 +1,14 @@
 let perlinGraphics;
 let scrollX;
 let scrollY;
-let tileSize = 20;
+let tileSize = 40;
 let bullets = [];
 let frameDelay = 0;
 let fireSpeed = 5;
 let autoFire = -1;
 let sandTile, soldier;
 let cols, rows;
+let tileset;
 let spriteSheet;
 let frameWidth = 200; // Width of each frame in the sprite sheet
 let frameHeight = 200; // Height of each frame in the sprite sheet
@@ -23,6 +24,7 @@ let enemies = [];
 let bulletImg;
 
 function preload() {
+    tileset = loadImage("./assets/tilesheet.png")
     sandTile = loadImage("./assets/Sand _2.jpg");
     skeletonSpriteIdle = loadImage("./assets/enemies/Skeleton/Skeleton_Idle.png");
     goblinImg = loadImage("./assets/enemies/goblinsword.png");
@@ -67,9 +69,9 @@ function preload() {
     }
 }
 function setup() {
-    createCanvas(400, 400);
-    perlinGraphics = createGraphics(1600, 1600); // create scrolling perlin noise canvas 
-    watergraphics = createGraphics(2000, 2000); // create water border
+    createCanvas(600, 600);
+    perlinGraphics = createGraphics(2000, 2000); // create scrolling perlin noise canvas 
+    watergraphics = createGraphics(2500, 2500); // create water border
     watergraphics.fill(128, 130, 250); // water border color
     watergraphics.rect(0, 0, 2000, 2000); // fill it with water
     image(watergraphics, 0, 0); // show water border
@@ -81,6 +83,9 @@ function setup() {
     perlinGraphics.fill(0);
     // create a starting black 3x3 for player spawn
     perlinGraphics.rect(perlinGraphics.width / 2 - tileSize, perlinGraphics.height / 2 - tileSize, tileSize * 3, tileSize * 3);
+    for (let i = 0; i < 5; i++) {
+        enemies.push(new Enemy());
+    }
 }
 
 function draw() {
@@ -130,10 +135,10 @@ function perlinBG() {
             if (colour < 95) {
                 colour = color(128, 197, 222);
                 walkable = false;
+                perlinGraphics.fill(colour);
+                perlinGraphics.noStroke();
+                perlinGraphics.rect(x, y, tileSize, tileSize);
             }
-            perlinGraphics.fill(colour);
-            perlinGraphics.noStroke();
-            perlinGraphics.rect(x, y, tileSize, tileSize);
 
             // Create grid node
             let node = {
