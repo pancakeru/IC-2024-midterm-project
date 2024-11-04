@@ -28,7 +28,7 @@ let selectedPath = null;
 let hatArea, armorArea, weaponArea, bootsArea;
 // Variables for tracking the selected category
 let selectedCategory = "hats";
-let currency = 500;
+let currency = 50;
 let characterImg;
 
 function preload() {

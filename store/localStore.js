@@ -36,7 +36,7 @@ function SaveCharData() {
   
       characterData = data.characterData || characterData;
       stats = data.stats || stats;
-      currency = data.currency !== undefined ? data.currency : 500;
+      currency = data.currency !== undefined ? data.currency : 50;
   
       // Restore item states
       if (data.itemsData) {
@@ -56,7 +56,7 @@ function SaveCharData() {
     } else {
       console.log("No saved data found. Initializing with default values.");
       selectedCategory = 'hats';
-      currency = 500;
+      currency = 50;
       SaveCharData();
     }
   }
