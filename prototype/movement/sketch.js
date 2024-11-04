@@ -1,12 +1,20 @@
 let perlinGraphics;
+let watergraphics;
 let scrollX;
 let scrollY;
+let playerHP = 5;
+let hitEffectAlpha = 0;
+let hitEffectDuration = 120;
+let AD = 1;
+let bootSpeed = 3;
+let waveNumber = 0;
+let enemiesPerWave = 5;
 let tileSize = 40;
 let bullets = [];
 let frameDelay = 0;
 let fireSpeed = 5;
 let autoFire = -1;
-let sandTile, soldier;
+let skeleton;
 let cols, rows;
 let tileset;
 let spriteSheet;
@@ -15,59 +23,24 @@ let frameHeight = 200; // Height of each frame in the sprite sheet
 let currentFrame = 0;
 let totalFrames = 6;
 let animationSpeed = 10; // Adjust to control animation speed
-let idleFrames = [];
-let moveFrames = [];
-let shootFrames = [];
-let reloadFrames = [];
-let attackFrames = [];
+let zombieWalkFrames = [];
+let zombieAttackFrames = [];
 let enemies = [];
 let bulletImg;
+let grid = [];
 
 function preload() {
-    tileset = loadImage("./assets/tilesheet.png")
-    sandTile = loadImage("./assets/Sand _2.jpg");
-    skeletonSpriteIdle = loadImage("./assets/enemies/Skeleton/Skeleton_Idle.png");
-    goblinImg = loadImage("./assets/enemies/goblinsword.png");
-    golemImg = loadImage("./assets/enemies/golem-walk.png");
-    bulletImg = loadImage("./assets/bullet.png");
-
-    for (let i = 0; i <= 19; i++) {
-        idleFrames.push(
-            loadImage(
-                `./assets/Top_Down_Survivor/handgun/idle/survivor-idle_handgun_${i}.png`
-            )
-        );
+    for (let i = 0; i < 17; i++) {
+        let frame = loadImage(`./assets/export/skeleton-move_${i}.png`);
+        zombieWalkFrames.push(frame);
     }
-    for (let i = 0; i <= 14; i++) {
-        attackFrames.push(
-            loadImage(
-                `./assets/Top_Down_Survivor/handgun/meleeattack/survivor-meleeattack_handgun_${i}.png`
-            )
-        );
+    for (let i = 0; i < 9; i++) {
+        let frame = loadImage(`./assets/export/skeleton-attack_${i}.png`);
+        zombieAttackFrames.push(frame);
     }
-
-    for (let i = 0; i <= 19; i++) {
-        moveFrames.push(
-            loadImage(
-                `./assets/Top_Down_Survivor/handgun/move/survivor-move_handgun_${i}.png`
-            )
-        );
-    }
-    for (let i = 0; i <= 2; i++) {
-        shootFrames.push(
-            loadImage(
-                `./assets/Top_Down_Survivor/handgun/shoot/survivor-shoot_handgun_${i}.png`
-            )
-        );
-    }
-    for (let i = 0; i <= 14; i++) {
-        shootFrames.push(
-            loadImage(
-                `./assets/Top_Down_Survivor/handgun/reload/survivor-reload_handgun_${i}.png`
-            )
-        );
-    }
+    tileset = loadImage("./assets/tilesheet.png");
 }
+
 function setup() {
     createCanvas(600, 600);
     perlinGraphics = createGraphics(2000, 2000); // create scrolling perlin noise canvas 
@@ -83,9 +56,17 @@ function setup() {
     perlinGraphics.fill(0);
     // create a starting black 3x3 for player spawn
     perlinGraphics.rect(perlinGraphics.width / 2 - tileSize, perlinGraphics.height / 2 - tileSize, tileSize * 3, tileSize * 3);
-    for (let i = 0; i < 5; i++) {
-        enemies.push(new Enemy());
+
+    // Set the starting area to walkable
+    for (let y = perlinGraphics.height / 2 - tileSize; y < perlinGraphics.height / 2 - tileSize + tileSize * 3; y += tileSize) {
+        let rowIndex = Math.floor(y / tileSize);
+        for (let x = perlinGraphics.width / 2 - tileSize; x < perlinGraphics.width / 2 - tileSize + tileSize * 3; x += tileSize) {
+            let colIndex = Math.floor(x / tileSize);
+            grid[rowIndex][colIndex].walkable = true;
+        }
     }
+
+    startNewWave();
 }
 
 function draw() {
@@ -96,6 +77,7 @@ function draw() {
     for (let enemy of enemies) {
         enemy.update();
         enemy.display();
+        enemy.checkProximityToPlayer();
     }
 
     frameDelay++;
@@ -107,12 +89,12 @@ function draw() {
     }
 
     for (let i = bullets.length - 1; i >= 0; i--) {
-        bullets[i].display();
+        let collision = bullets[i].display();
         if (
             bullets[i].x < 0 ||
             bullets[i].x > perlinGraphics.width ||
             bullets[i].y < 0 ||
-            bullets[i].y > perlinGraphics.height
+            bullets[i].y > perlinGraphics.height || collision == true
         ) {
             bullets.splice(i, 1);
         }
@@ -120,31 +102,127 @@ function draw() {
 
     updateScroll();
     fill(255, 0, 0);
-    rect(width / 2 - 10, height / 2 - 10, 20, 20);
+    rect(width / 2 - 10, height / 2 - 10, 40, 40);
+    if (enemies.length === 0) {
+        startNewWave();
+    }
+    displayUI();
+    if (playerHP < 1) {
+        GameOver()
+    }
+    if (hitEffectAlpha > 0) {
+        drawHitEffect();
+        hitEffectAlpha = max(0, hitEffectAlpha - 5); // Reduce alpha to fade out the effect
+    }
+}
+function GameOver() {
+    // to be filled in
+}
+function displayUI() {
+    // Draw health bar background
+    fill(0, 0, 0, 200); // Semi-transparent background
+    rect(10, 10, 105, 30, 5); // Slightly rounded corners
+
+    // Draw health bar (red rectangles for each health point)
+    for (let i = 0; i < playerHP; i++) {
+        fill(255, 0, 0);
+        rect(15 + i * 20, 15, 15, 20); // Draw each health point as a red bar
+    }
+
+    // Display round number
+    textSize(16);
+    fill(0, 0, 0, 200); // Background for text
+    rect(10, height - 50, 150, 45, 10); // Background for round info
+    fill(255); // White text color
+    textAlign(LEFT, CENTER);
+    text(`Round:  ${waveNumber}`, 20, height - 35); // Display round number text
+    text(`Zombies Left: ${enemies.length}`, 20, height - 20)
+}
+
+function drawHitEffect() {
+    push();
+    let playerX = width / 2;
+    let playerY = height / 2;
+    noFill();
+    stroke(255, 0, 0, hitEffectAlpha); // Red color with transparency
+    strokeWeight(200);
+    ellipse(playerX, playerY, 850); // Circle around the player
+    pop();
 }
 
 function perlinBG() {
     grid = [];
     perlinGraphics.noiseDetail(24);
-    for (let y = 0; y < perlinGraphics.height; y += tileSize) {
+
+    for (let rowIndex = 0, y = 0; y < perlinGraphics.height; y += tileSize, rowIndex++) {
         let row = [];
-        for (let x = 0; x < perlinGraphics.width; x += tileSize) {
-            let noiseVal = noise(x / 100, y / 100);
-            let colour = map(noiseVal, 0, 1, 0, 255);
+        for (let colIndex = 0, x = 0; x < perlinGraphics.width; x += tileSize, colIndex++) {
+            let noiseVal = noise(x / 200, y / 200);
             let walkable = true;
-            if (colour < 95) {
-                colour = color(128, 197, 222);
-                walkable = false;
-                perlinGraphics.fill(colour);
+
+            // Map noiseVal to specific tile coordinates in the 8x8 grid
+            let sx = 0;
+            let sy = 0;
+
+            // Reordered conditions from smallest to largest noiseVal
+            if (noiseVal < 0.35) {
+                // Water tile (unwalkable)
+                perlinGraphics.fill(28, 163, 236);
                 perlinGraphics.noStroke();
                 perlinGraphics.rect(x, y, tileSize, tileSize);
+                walkable = false;
+            } else if (noiseVal < 0.40) {
+                sx = 280;
+                sy = 40;
+                walkable = true;
+            } else if (noiseVal < 0.45) {
+                sx = 280;
+                sy = 80;
+                walkable = true;
+            } else if (noiseVal < 0.5) {
+                sx = 280;
+                sy = 120;
+                walkable = true;
+            } else if (noiseVal < 0.55) {
+                sx = 0;
+                sy = 40;
+                walkable = true;
+            } else if (noiseVal < 0.60) {
+                sx = 120;
+                sy = 0;
+                walkable = true;
+            } else if (noiseVal < 0.65) {
+                sx = 120;
+                sy = 40;
+                walkable = true;
+            } else if (noiseVal < 0.70) {
+                sx = 200;
+                sy = 0;
+                walkable = true;
+            }
+            else if (noiseVal < 0.75) {
+                sx = 80;
+                sy = 320;
+                walkable = true;
+            }
+            else {
+                sx = 40;
+                sy = 0;
+                walkable = true;
             }
 
-            // Create grid node
+            // Draw the selected tile on the perlinGraphics if it's not water
+            if (walkable) {
+                perlinGraphics.image(tileset, x, y, tileSize, tileSize, sx, sy, tileSize, tileSize);
+            }
+
+            // Create grid node with row and col indices
             let node = {
                 x: x,
                 y: y,
-                walkable: walkable
+                row: rowIndex,
+                col: colIndex,
+                walkable: walkable,
             };
             row.push(node);
         }
@@ -152,20 +230,72 @@ function perlinBG() {
     }
 }
 
+function startNewWave() {
+    for (let i = 0; i < enemiesPerWave * waveNumber + 5; i++) { // Increase enemy count with each wave
+        enemies.push(new Enemy());
+    }
+    waveNumber++; // Increment wave number after each spawn
+}
 function updateScroll() {
-    let playerX = scrollX + width / 2;
-    let playerY = scrollY + height / 2;
+    let moveSpeed = bootSpeed;
 
-    if (keyIsDown(68) && scrollX < perlinGraphics.width - 210) {
-        if (perlinGraphics.get(playerX + 12, playerY)[1] != 197) scrollX += 3;
-    } else if (keyIsDown(65) && scrollX > -190) {
-        if (perlinGraphics.get(playerX - 12, playerY)[1] != 197) scrollX -= 3;
+    // Handle horizontal movement independently
+    if (keyIsDown(68)) { // D key
+        let tempScrollX = scrollX + moveSpeed;
+        let newPlayerX = tempScrollX + width / 2 + 28;
+        let newPlayerY = scrollY + height / 2;
+        let playerNode = getNode(newPlayerX, newPlayerY);
+        if (playerNode && playerNode.walkable) {
+            scrollX = tempScrollX;
+            scrollX = constrain(scrollX, 0 - width, perlinGraphics.width + width);
+        }
+    }
+    if (keyIsDown(65)) { // A key
+        let tempScrollX = scrollX - moveSpeed;
+        let newPlayerX = tempScrollX + width / 2 - 9;
+        let newPlayerY = scrollY + height / 2;
+        let playerNode = getNode(newPlayerX, newPlayerY);
+        if (playerNode && playerNode.walkable) {
+            scrollX = tempScrollX;
+            scrollX = constrain(scrollX, 0 - width, perlinGraphics.width + width - tileSize / 2);
+        }
     }
 
-    if (keyIsDown(87) && scrollY > -190) {
-        if (perlinGraphics.get(playerX, playerY - 12)[1] != 197) scrollY -= 3;
-    } else if (keyIsDown(83) && scrollY < perlinGraphics.height - 210) {
-        if (perlinGraphics.get(playerX, playerY + 12)[1] != 197) scrollY += 3;
+    // Handle vertical movement independently
+    if (keyIsDown(87)) { // W key
+        let tempScrollY = scrollY - moveSpeed;
+        let newPlayerX = scrollX + width / 2;
+        let newPlayerY = tempScrollY + height / 2 - 9;
+        let playerNode = getNode(newPlayerX, newPlayerY);
+        if (playerNode && playerNode.walkable) {
+            scrollY = tempScrollY;
+            scrollY = constrain(scrollY, 0 - width + tileSize / 2, perlinGraphics.height + height - tileSize / 2);
+        }
+    }
+    if (keyIsDown(83)) { // S key
+        let tempScrollY = scrollY + moveSpeed;
+        let newPlayerX = scrollX + width / 2;
+        let newPlayerY = tempScrollY + height / 2 + 26;
+        let playerNode = getNode(newPlayerX, newPlayerY);
+        if (playerNode && playerNode.walkable) {
+            scrollY = tempScrollY;
+            scrollY = constrain(scrollY, 0 - width, perlinGraphics.height + height - tileSize);
+        }
+    }
+}
+
+function getNode(x, y) {
+    let col = Math.floor(x / tileSize);
+    let row = Math.floor(y / tileSize);
+    if (
+        col >= 0 &&
+        col < grid[0].length &&
+        row >= 0 &&
+        row < grid.length
+    ) {
+        return grid[row][col];
+    } else {
+        return null;
     }
 }
 
@@ -174,7 +304,7 @@ class Bullet {
         this.x = scrollX + width / 2;
         this.y = scrollY + height / 2;
         this.bulletPos = createVector(this.x, this.y);
-        this.mouseDir = createVector(mouseX + scrollX, mouseY + scrollY).sub(this.bulletPos);
+        this.mouseDir = createVector(mouseX + scrollX - this.x, mouseY + scrollY - this.y);
         this.mouseDir.setMag(5);
     }
     display() {
@@ -186,11 +316,16 @@ class Bullet {
         for (let i = enemies.length - 1; i >= 0; i--) {
             let enemy = enemies[i];
 
-            // Check if the distance between the bullet and enemy is less than 3
-            if (this.bulletPos.copy().sub(enemy.position).mag() < 10) {
-                enemies.splice(i, 1); // Remove the enemy from the array by index
+            // Check if the distance between the bullet and enemy is less than 10
+            if (this.bulletPos.copy().sub(enemy.position).mag() < 35) {
+                enemy.Health -= AD;
+                if (enemy.Health < 1) {
+                    enemies.splice(i, 1); // Remove the enemy from the array by index
+                }
+                return true;
             }
         }
+        return false;
     }
 }
 
@@ -202,60 +337,96 @@ function keyPressed() {
 
 class Enemy {
     constructor() {
-        // random enemy spawn location (currently)
-        this.position = createVector(
-            random(0, perlinGraphics.width),
-            random(0, perlinGraphics.height)
-        );
-
-        // ensure the enemy starts on a walkable tile
-        let startNode = this.getNode(this.position.x, this.position.y);
-        while (!startNode.walkable) {
-            this.position = createVector(
-                random(0, perlinGraphics.width),
-                random(0, perlinGraphics.height)
-            );
-            startNode = this.getNode(this.position.x, this.position.y);
+        let spawnEdge = Math.floor(random(4)); // 0: top, 1: bottom, 2: left, 3: right
+        if (spawnEdge === 0) {
+            // Top border
+            this.position = createVector(random(0, perlinGraphics.width), 0);
+        } else if (spawnEdge === 1) {
+            // Bottom border
+            this.position = createVector(random(0, perlinGraphics.width), perlinGraphics.height - tileSize);
+        } else if (spawnEdge === 2) {
+            // Left border
+            this.position = createVector(0, random(0, perlinGraphics.height));
+        } else if (spawnEdge === 3) {
+            // Right border
+            this.position = createVector(perlinGraphics.width - tileSize, random(0, perlinGraphics.height));
         }
-        // all code above is currently placeholder
-        // initalize variables
+
+        // Ensure the enemy spawns on a walkable tile
+        let startNode = getNode(this.position.x, this.position.y);
+        while (!startNode || !startNode.walkable) {
+            if (spawnEdge === 0) {
+                this.position = createVector(random(0, perlinGraphics.width), 0);
+            } else if (spawnEdge === 1) {
+                this.position = createVector(random(0, perlinGraphics.width), perlinGraphics.height - tileSize);
+            } else if (spawnEdge === 2) {
+                this.position = createVector(0, random(0, perlinGraphics.height));
+            } else if (spawnEdge === 3) {
+                this.position = createVector(perlinGraphics.width - tileSize, random(0, perlinGraphics.height));
+            }
+            startNode = getNode(this.position.x, this.position.y);
+        }
+
+        // initialize variables\
+        this.Health = 3;
         this.velocity = createVector(0, 0);
-        this.maxSpeed = 5.0;
-        this.maxForce = 0.1;
+        this.maxSpeed = 4.0;
+        this.maxForce = 0.5;
         this.path = [];
         this.currentStep = 0;
         this.lastCalculation = 0;
-        this.pathRecalcInterval = 20; // update path every 20 frames
+        this.pathRecalcInterval = 30; // update path every 30 frames
+        this.hitTimer = 0;
+        this.frame = 0;
+        this.attackMode = 0;
     }
-
-    update() {
-        // get vector to player pos
+    checkProximityToPlayer() {
         let playerPos = createVector(scrollX + width / 2, scrollY + height / 2);
+        if (p5.Vector.dist(this.position, playerPos) < 150) {
+            this.attackMode = 1;
+        }
+        else {
+            this.attackMode = 0;
+        }
+        this.hitTimer++;
+        if (p5.Vector.dist(this.position, playerPos) < 35 && this.hitTimer > 120) {
+            playerHP = max(0, playerHP - 1); // Reduce health and prevent negative values
+            this.hitTimer = 0;
+            hitEffectAlpha = 150;
+        }
+    }
+    update() {
+        let playerPos = createVector(scrollX + width / 2, scrollY + height / 2);
+        let distanceToPlayer = p5.Vector.dist(this.position, playerPos);
 
-        // recalculate path if necessary
+        // Recalculate path less frequently if enemy is far from the player
+        let recalculationInterval = distanceToPlayer < 200 ? 30 : 80;
+
         if (
-            frameCount - this.lastCalculation > this.pathRecalcInterval ||
+            frameCount - this.lastCalculation > recalculationInterval ||
             this.path.length === 0 ||
             this.currentStep >= this.path.length
         ) {
-            // represent player and enemy as nodes
-            let startNode = this.getNode(this.position.x, this.position.y);
-            let goalNode = this.getNode(playerPos.x, playerPos.y);
+            let startNode = getNode(this.position.x, this.position.y);
+            let goalNode = getNode(playerPos.x, playerPos.y);
 
-            if (!startNode.walkable || !goalNode.walkable) {
+            if (!startNode || !goalNode || !startNode.walkable || !goalNode.walkable) {
                 this.path = [];
                 return;
             }
-            // call find path
+
+            // Recalculate path and reset the current step
             this.path = this.findPath(startNode, goalNode);
             this.currentStep = 0;
-            // update last calculation's frame count
             this.lastCalculation = frameCount;
         }
-        // call follow path
+
+        // Follow the calculated path
         this.followPath();
     }
-    // gpt
+
+
+
     followPath() {
         if (this.path.length > 0 && this.currentStep < this.path.length) {
             let nextNode = this.path[this.currentStep];
@@ -264,83 +435,77 @@ class Enemy {
                 nextNode.y + tileSize / 2
             );
 
-            this.seek(targetPos);
-
-            // Check if reached the current target node
-            if (p5.Vector.dist(this.position, targetPos) < 5) {
+            // Increase the threshold distance to 15 for transitioning to the next node
+            if (p5.Vector.dist(this.position, targetPos) < 15) {
                 this.currentStep++;
             }
+
+            // Smooth movement toward the target node
+            this.seek(targetPos);
         } else {
-            // No path or reached the end, seek the player's current position
+            // If at the end of the path, seek the player's position directly
             let playerPos = createVector(scrollX + width / 2, scrollY + height / 2);
             this.seek(playerPos);
         }
     }
-    // gpt
+
+
+
     seek(target) {
         let desired = p5.Vector.sub(target, this.position);
         let distance = desired.mag();
 
-        if (distance === 0) {
-            return; // avoid division by zero
-        }
+        if (distance === 0) return; // Avoid division by zero
 
         desired.normalize();
 
-        // slow down when close to target to prevent overshooting
-        if (distance < 50) {
-            let m = map(distance, 0, 50, 0, this.maxSpeed);
-            desired.mult(m);
-        } else {
-            desired.mult(this.maxSpeed);
-        }
+        // Dynamically reduce speed when close to the target to prevent jittery movement
+        let speed = distance < 50 ? map(distance, 0, 50, 0, this.maxSpeed) : this.maxSpeed;
+        desired.mult(speed);
 
-        let steer = p5.Vector.sub(desired, this.velocity);
+        // Apply damping to smooth out changes in direction
+        let damping = distance < 50 ? 0.1 : 1.0; // Apply damping if close to the target
+        let steer = p5.Vector.sub(desired, this.velocity).mult(damping);
         steer.limit(this.maxForce);
 
         this.velocity.add(steer);
-        this.velocity.limit(this.maxSpeed);
+        this.velocity.limit(this.maxSpeed); // Limit velocity to max speed
 
-        // Predict next position
-        let nextPosition = p5.Vector.add(this.position, this.velocity);
-
-        // Check if next position is walkable
-        let nextNode = this.getNode(nextPosition.x, nextPosition.y);
-        if (nextNode && nextNode.walkable) {
-            // Move to next position
-            this.position = nextPosition;
-        } else {
-            // Adjust velocity to prevent moving into water
-            this.velocity.mult(0); // Stop movement
-        }
+        // Update position smoothly
+        this.position.add(this.velocity);
     }
 
+
+
     display() {
-        fill(0, 255, 0);
+        // Determine the correct frames array based on attack mode
+        const frames = this.attackMode === 0 ? zombieWalkFrames : zombieAttackFrames;
+
+        // Increment frame only if the array is non-empty
+        if (frames.length > 0 && frameCount % animationSpeed === 0) {
+            this.frame = (this.frame + 1) % frames.length;
+        }
+
         push();
         translate(this.position.x - scrollX, this.position.y - scrollY);
         if (this.velocity.mag() > 0) {
             rotate(this.velocity.heading());
         }
-        rectMode(CENTER);
-        rect(0, 0, tileSize, tileSize);
+        imageMode(CENTER);
+
+        // Display the correct frame based on the attack mode
+        if (frames[this.frame]) {
+            image(frames[this.frame], 0, 0, tileSize * 2, tileSize * 2);
+        } else {
+            this.frame = 0;
+            image(frames[this.frame], 0, 0, tileSize * 2, tileSize * 2);
+
+        }
+
         pop();
     }
 
-    getNode(x, y) {
-        let col = Math.floor(x / tileSize);
-        let row = Math.floor(y / tileSize);
-        if (
-            col >= 0 &&
-            col < grid[0].length &&
-            row >= 0 &&
-            row < grid.length
-        ) {
-            return grid[row][col];
-        } else {
-            return null;
-        }
-    }
+
 
     findPath(startNode, goalNode) {
         let openSet = [];
@@ -393,7 +558,8 @@ class Enemy {
     }
 
     heuristic(a, b) {
-        return p5.Vector.dist(createVector(a.x, a.y), createVector(b.x, b.y)) / tileSize;
+        // Use Manhattan distance for grid-based pathfinding
+        return abs(a.col - b.col) + abs(a.row - b.row);
     }
 
     reconstructPath(cameFrom, current) {
@@ -407,8 +573,8 @@ class Enemy {
 
     getNeighbors(node) {
         let neighbors = [];
-        let row = Math.floor(node.y / tileSize);
-        let col = Math.floor(node.x / tileSize);
+        let row = node.row;
+        let col = node.col;
 
         let directions = [
             { dr: -1, dc: 0, cost: 1 }, // Up
@@ -448,5 +614,5 @@ class Enemy {
 }
 
 function nodeKey(node) {
-    return `${node.x},${node.y}`;
+    return `${node.row},${node.col}`;
 }
