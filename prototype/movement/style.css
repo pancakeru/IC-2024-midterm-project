@@ -1,0 +1,43 @@
+
+body {
+    margin: auto;
+    align-self: center;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    display: flex;
+    background-image: url("assets/drawing-desert-with-landscape-background_889056-167277.avif");
+    background-size: cover;
+    
+}
+
+#inventory {
+    background-color: gray;
+    width: 600px;
+    height: 150px;
+    align-items: center;
+    justify-content: center;
+    justify-items: center;
+    align-self: center;
+    display: flex;
+    border-radius: 10%;
+}
+
+iframe {
+    border: 0;
+}
+
+#game {
+    margin: auto;
+    align-self: center;
+    align-items: center;
+    justify-content: center;
+}
+
+.inv-item {
+    width: 20%;
+    height: 70%;
+    background-color: white;
+    margin: 10px;
+    border-radius: 10%;
+}

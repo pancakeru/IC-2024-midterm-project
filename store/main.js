@@ -29,7 +29,7 @@ let selectedPath = null;
 let hatArea, armorArea, weaponArea, bootsArea;
 // Variables for tracking the selected category
 let selectedCategory = "hats";
-let currency = 500;
+let currency = 50;
 let characterImg;
 
 function preload() {
@@ -49,7 +49,7 @@ function loadItemsFromSpriteSheet() {
       img: extractItem(0, 1),
       category: "hats",
       name: "Shadow Hood",
-      effect: "+10 Stealth",
+      effect: "+10 Shooting Speed",
       stealth: 10,
       cost: 15,
     },
@@ -58,7 +58,7 @@ function loadItemsFromSpriteSheet() {
       img: extractItem(0, 2),
       category: "hats",
       name: "Hunter's Cap",
-      effect: "+20 Stealth",
+      effect: "+20 Shooting Speed",
       stealth: 20,
       cost: 25,
     },
@@ -67,7 +67,7 @@ function loadItemsFromSpriteSheet() {
       img: extractItem(0, 3),
       category: "hats",
       name: "Knight's Helm",
-      effect: "+30 Stealth",
+      effect: "+30 Shooting Speed",
       stealth: 30,
       cost: 35,
     },
@@ -76,7 +76,7 @@ function loadItemsFromSpriteSheet() {
       img: extractItem(0, 4),
       category: "hats",
       name: "Mystic Crown",
-      effect: "+40 Stealth",
+      effect: "+40 Shooting Speed",
       stealth: 40,
       cost: 50,
     },
@@ -88,7 +88,7 @@ function loadItemsFromSpriteSheet() {
       img: extractItem(1, 0),
       category: "armor",
       name: "Leather Vest",
-      effect: "+10 Defense",
+      effect: "+10 Health",
       defense: 10,
       cost: 20,
     },
@@ -97,7 +97,7 @@ function loadItemsFromSpriteSheet() {
       img: extractItem(1, 1),
       category: "armor",
       name: "Chainmail",
-      effect: "+20 Defense",
+      effect: "+20 Health",
       defense: 20,
       cost: 40,
     },
@@ -106,7 +106,7 @@ function loadItemsFromSpriteSheet() {
       img: extractItem(1, 2),
       category: "armor",
       name: "Plate Armor",
-      effect: "+30 Defense",
+      effect: "+30 Health",
       defense: 30,
       cost: 60,
     },
@@ -115,7 +115,7 @@ function loadItemsFromSpriteSheet() {
       img: extractItem(1, 3),
       category: "armor",
       name: "Dragon Armor",
-      effect: "+40 Defense",
+      effect: "+40 Health",
       defense: 40,
       cost: 80,
     },
@@ -124,7 +124,7 @@ function loadItemsFromSpriteSheet() {
       img: extractItem(1, 4),
       category: "armor",
       name: "Titanium Suit",
-      effect: "+50 Defense",
+      effect: "+50 Health",
       defense: 50,
       cost: 100,
     },
@@ -245,13 +245,13 @@ function setup() {
   loadItemsFromSpriteSheet();
   LoadCharData();
 
-  hatArea = new ClickAreas(width / 4 + 140, height / 2 - 260, 140, 120, "hats");
+  hatArea = new ClickAreas(width / 4 + 130, height / 2 - 250, 150, 130, "hats");
 
   armorArea = new ClickAreas(
-    width / 4 +130,
-    height / 2 - 100,
+    width / 4 +125,
+    height / 2 - 110,
+    240,
     230,
-    220,
     "armor"
   );
 
