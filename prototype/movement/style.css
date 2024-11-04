@@ -4,6 +4,27 @@ body {
     align-self: center;
     align-items: center;
     justify-content: center;
-    display: flex;
     height: 100vh;
+    display: flex;
+}
+
+#inventory {
+    background-color: gray;
+    width: 600px;
+    height: 100px;
+    align-items: center;
+    justify-content: center;
+    justify-items: center;
+    align-self: center;
+}
+
+iframe {
+    border: 0;
+}
+
+#game {
+    margin: auto;
+    align-self: center;
+    align-items: center;
+    justify-content: center;
 }
