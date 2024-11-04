@@ -30,8 +30,8 @@ h1 {
 }
 
 #characterContainer {
-  width: 570px;  
-  height: 750px; 
+  width: 470px;  
+  height: 650px; 
   position: relative;
 }
 
@@ -514,7 +514,7 @@ justify-content: space-evenly;
 }
 
 .inventory-item img {
-  width:100%;
+  width:100%; 
   height: auto;
   border-radius: 4px;
 }

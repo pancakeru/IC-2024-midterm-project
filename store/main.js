@@ -229,11 +229,11 @@ function loadItemsFromSpriteSheet() {
 
 function setup() {
   const characterContainer = document.getElementById('characterContainer');
-  const containerWidth = characterContainer.offsetWidth;
+  const containerWidth = characterContainer.offsetWidth ;
   const containerHeight = characterContainer.offsetHeight;
 
 
-  canvas = createCanvas(containerWidth, containerHeight);
+  canvas = createCanvas(containerWidth -100, containerHeight);
   canvas.parent('characterContainer');
   canvas.position(0, 0);
   canvas.style('position', 'absolute');
