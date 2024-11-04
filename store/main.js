@@ -9,11 +9,12 @@ let boots = [];
 let gloves = [];
 let canvas;
 let inventory = [];
+//starting stats
 let stats = {
-  stealth: 0, // Initial stealth level
-  defense: 0, // Initial defense level
-  shootingSpeed: 0, // Initial shooting speed level
-  speed: 0, // Initial speed level
+  stealth: 0,
+  defense: 0, 
+  shootingSpeed: 0, 
+  speed: 0,
 };
 let characterData = {
   hats: null,
@@ -255,10 +256,10 @@ function setup() {
   );
 
   bootsArea = new ClickAreas(
-    width / 4 + 125,
-    height / 2 + 225,
-    200,
-    140,
+    width / 4 + 150,
+    height / 2 + 235,
+    245,
+    125,
     "boots"
   );
   weaponArea = new ClickAreas(
@@ -327,7 +328,7 @@ const MAX_STATS = {
   speed: 100,
 };
 
-// Extract specific item from the sprite sheet
+
 function extractItem(col, row) {
   let item = createGraphics(itemWidth, itemHeight);
   item.image(

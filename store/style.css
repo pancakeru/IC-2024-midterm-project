@@ -1,18 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Metal+Mania&family=Tomorrow:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
-/* Sand Background: #f0e5d1
-Warm Orange (Accent): #f4a261
-Clay-like Shade (Button Backgrounds): #d38b5d
-Darker Clay (Button Hover): #c3724e
-Gold (Currency & Stat Fills): #ffd700
-Soft Gold (Stat Bar Fill): #e09f3e
-Desert Rose (Borders): #d3b8ae
-Light Sand (Containers): #faf0dc
-Neutral Brown (Purchased Items): #8e8268
-Deep Brown (Text): #4b3832 */
 body {
     font-family: "Tomorrow", sans-serif;
-  /* background-color: #333; */
   color: black;
   background-color: #f0e5d1;
   margin: 0;
@@ -38,6 +27,12 @@ h1 {
   width: 100%;
   height: 50%;
   /* background-color: #392925ff; */
+}
+
+#characterContainer {
+  width: 570px;  
+  height: 750px; 
+  position: relative;
 }
 
 .purchased{
@@ -132,8 +127,8 @@ h1 {
 
 .shop-item img {
   width: 100%;
-  height: 100%; /* Image will resize proportionally */
-  max-height: 100%; /* Ensures image does not exceed container */
+  height: 100%; 
+  max-height: 100%; 
   border-radius: 5px;
 }
 
@@ -170,7 +165,6 @@ iframe {
   /* opacity: 0.5; */
 }
 
-/* Ready for Combat button */
 .buy-button {
   align-items: center;
   margin: 0;
@@ -252,7 +246,6 @@ iframe {
 }
 
 canvas {
-  /* position: relative; */
   z-index: 1;
 }
 
@@ -280,7 +273,6 @@ canvas {
   display: flex;
   justify-content: space-between;
   width: 100%;
-  /* justify-content: center; */
   align-items: center;
   margin-top: 20px;
 }
@@ -424,27 +416,27 @@ canvas {
   
   #characterContainer img {
     max-width: 100%;
-    height: auto;
-    position: relative; /* Keep this relative */
-    z-index: 1; /* Ensure it’s below the canvas and equipped items */
+    height: 660px;
+    position: relative; 
+    z-index: 1; 
   }
   
   #equippedItemsContainer {
     position: absolute;
     top: 0;
     left: 0;
-    z-index: 3; /* Higher than the canvas */
-    pointer-events: none; /* So items don't interfere with clicks */
+    z-index: 3; 
+    pointer-events: none; 
   }
   .category-name{
     margin-top: 1rem;
   }
   
   canvas {
-    position: absolute; /* Position the canvas absolutely within the container */
+    position: absolute; 
     top: 0;
     left: 0;
-    z-index: 2; /* Between the soldier image and equipped items */
+    z-index: 2; 
   }
   
 .character-cont{
@@ -468,18 +460,18 @@ canvas {
   justify-content: space-evenly;  
   align-content: center;
 } */
-/* Container holding the inventory items */
+
 #inventory {
   display: flex;
   justify-content: space-evenly;
-  gap: 10px; /* Space between items */
+  gap: 10px; 
   padding: 10px;
   background-color: #faf0dc;
   /* border: 1px solid #ddd; */
   border-radius: 8px;
   /* height: 50%;
   width: 80%; */
-  margin: 10px auto; /* Center the inventory */
+  margin: 10px auto;
   height: 75%;
   overflow: auto;
   
@@ -503,7 +495,7 @@ justify-content: space-evenly;
   height: 50%;
   width: 80%;
 }
-/* Style for each inventory item */
+
 .inventory-item {
   /* background-color: #bd9e92; */
   display: flex;
@@ -522,7 +514,7 @@ justify-content: space-evenly;
 }
 
 .inventory-item img {
-  width:100%; /* Responsive image size within inventory items */
+  width:100%;
   height: auto;
   border-radius: 4px;
 }
