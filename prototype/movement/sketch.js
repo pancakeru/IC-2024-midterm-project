@@ -5,7 +5,9 @@ let scrollY;
 let playerHP = 5;
 let hitEffectAlpha = 0;
 let hitEffectDuration = 120;
-let AD = 1;
+let AD = 5;
+let zombieHealth = 15;
+let moneyCollected = 0;
 let bootSpeed = 3;
 let waveNumber = 0;
 let enemiesPerWave = 5;
@@ -125,7 +127,27 @@ function draw() {
     }
 }
 function GameOver() {
-    // to be filled in
+    remove()
+    let gameOverDiv = document.createElement("div");
+    gameOverDiv.style.position = "fixed";
+    gameOverDiv.style.top = "50%";
+    gameOverDiv.style.left = "50%";
+    gameOverDiv.style.color = "red";
+    gameOverDiv.style.fontSize = "48px";
+    gameOverDiv.style.fontWeight = "bold";
+    gameOverDiv.style.textAlign = "center";
+    gameOverDiv.style.backgroundColor = "black";
+    gameOverDiv.style.padding = "20px";
+    gameOverDiv.style.borderRadius = "10px";
+    gameOverDiv.innerHTML = `Game Over<br> <span style="font-size: 24px; color: white;">Stats:<br> Rounds Survived: ${waveNumber - 1} <br> Zombies Killed: ${moneyCollected / 3}<br> Money Collected: ${moneyCollected} <br> <a href="../../store/index.html" target="_top">
+    <button style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Back to Main Page</button>
+</a></span>`;
+    let inventoryDiv = window.parent.document.getElementById("inventory")
+    inventoryDiv.style.display = "none"
+
+
+    // Append the Game Over div to the body
+    document.body.appendChild(gameOverDiv);
 }
 function displayPlayer() {
     let playerX = width / 2;
@@ -367,6 +389,7 @@ class Bullet {
                 enemy.Health -= AD; // reduce enemy health by attack damage
                 if (enemy.Health < 1) { // if enemy health is below 1
                     enemies.splice(i, 1); // remove enemy out of aray
+                    moneyCollected += 3;
                 }
                 return true; // return true if collision happened (cant delete bullet inside bullet instance so it is returned above and deleted there)
             }
@@ -412,7 +435,7 @@ class Enemy {
         }
 
         // initialize variables
-        this.Health = 3;
+        this.Health = zombieHealth;
         this.velocity = createVector(0, 0);
         this.maxSpeed = 4.0;
         this.maxForce = 0.5;
