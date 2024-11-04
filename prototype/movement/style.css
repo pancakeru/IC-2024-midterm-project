@@ -1,43 +1,80 @@
+/* Basic responsive reset */
+* {
+    box-sizing: border-box;
+}
 
 body {
-    margin: auto;
-    align-self: center;
+    margin: 0;
+    display: flex;
     align-items: center;
     justify-content: center;
     height: 100vh;
-    display: flex;
     background-image: url("assets/drawing-desert-with-landscape-background_889056-167277.avif");
     background-size: cover;
-    
-}
-
-#inventory {
-    background-color: gray;
-    width: 600px;
-    height: 150px;
-    align-items: center;
-    justify-content: center;
-    justify-items: center;
-    align-self: center;
-    display: flex;
-    border-radius: 10%;
-}
-
-iframe {
-    border: 0;
+    background-position: center;
+    overflow: hidden;
 }
 
 #game {
-    margin: auto;
-    align-self: center;
-    align-items: center;
+    display: flex;
     justify-content: center;
+    align-items: center;
+    margin: 20px;
 }
 
+#game iframe {
+    width: 90vw;
+    height: 90vw;
+    max-width: 600px;
+    max-height: 600px;
+    border: none;
+}
+
+/* Inventory styling */
+#inventory {
+    background-color: gray;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    width: 30vw;
+    max-width: 120px;
+    padding: 10px;
+    border-radius: 20px;
+    position: absolute;
+    top: 50%;
+    right: 5%;
+    transform: translateY(-50%);
+}
+
+/* Inventory items */
 .inv-item {
-    width: 20%;
-    height: 70%;
     background-color: white;
-    margin: 10px;
-    border-radius: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    aspect-ratio: 1;
+    /* Ensures square items */
+    padding: 10px;
+    border-radius: 10px;
+}
+
+/* Responsive adjustments for larger screens */
+@media (min-width: 768px) {
+    body {
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    #game iframe {
+        width: 600px;
+        height: 600px;
+    }
+
+    #inventory {
+        width: 120px;
+        padding: 15px;
+    }
 }

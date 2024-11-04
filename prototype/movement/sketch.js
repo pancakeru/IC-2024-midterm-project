@@ -30,8 +30,36 @@ let pistolImages = [];
 let currentWeapon = 'rifle';
 let currentFootFrame = 0;
 let survivorAngle;
-
+let bgSound;
+let zombieSound;
+let bulletSound;
+let gameOverSound;
+let playerHitSound;
+let gameData = JSON.parse(localStorage.getItem("gameData")) || {};
+let stats = gameData.stats || {};
+let localDamage = stats.stealth;
+if (localDamage) {
+    AD += (localDamage / 20)
+}
+let localHealth = stats.defense;
+if (localHealth) {
+    playerHP += (localHealth / 10)
+}
+let localFireSpeed = stats.shootingSpeed;
+if (localFireSpeed) {
+    fireSpeed += (localFireSpeed / 10)
+}
+let localSpeed = stats.speed
+if (localSpeed) {
+    bootSpeed += (localSpeed / 40)
+}
+let startingPlayerHP = playerHP
 function preload() {
+    bgSound = loadSound('assets/audio/bgm.mp3')
+    zombieSound = loadSound('assets/audio/zombie_1.mp3')
+    bulletSound = loadSound('assets/audio/bullet_quiet.mp3')
+    gameOverSound = loadSound('assets/audio/gameover_bad.mp3')
+    playerHitSound = loadSound('assets/audio/player_hit.mp3')
     feetIdle = loadImage('assets/Top_Down_Survivor/feet/idle/survivor-idle_0.png');
     for (let i = 0; i < 20; i++) {
         feetWalking.push(loadImage(`assets/Top_Down_Survivor/feet/run/survivor-run_${i}.png`));
@@ -82,6 +110,10 @@ function setup() {
 }
 
 function draw() {
+    if (!bgSound.isPlaying()) {
+        bgSound.setVolume(0.5)
+        bgSound.play()
+    }
     background(220);
     image(watergraphics, 0, 0); // draw needed graphics
     image(perlinGraphics, -scrollX, -scrollY);
@@ -96,6 +128,7 @@ function draw() {
     if (mouseIsPressed || autoFire == 1) {
         if (frameDelay > 60 / fireSpeed) {
             bullets.push(new Bullet());
+            bulletSound.play()
             frameDelay = 0;
         }
     }
@@ -127,11 +160,15 @@ function draw() {
     }
 }
 function GameOver() {
+    bgSound.stop()
+    gameOverSound.setVolume(2)
+    gameOverSound.play()
     remove()
     let gameOverDiv = document.createElement("div");
     gameOverDiv.style.position = "fixed";
     gameOverDiv.style.top = "50%";
     gameOverDiv.style.left = "50%";
+    gameOverDiv.style.transform = "translate(-50%, -50%)";
     gameOverDiv.style.color = "red";
     gameOverDiv.style.fontSize = "48px";
     gameOverDiv.style.fontWeight = "bold";
@@ -144,7 +181,13 @@ function GameOver() {
 </a></span>`;
     let inventoryDiv = window.parent.document.getElementById("inventory")
     inventoryDiv.style.display = "none"
+    let localCurrency = gameData.currency || 0;
+    if (localCurrency) {
+        moneyCollected += Number(localCurrency);
 
+    }
+    gameData.currency = moneyCollected;
+    localStorage.setItem("gameData", JSON.stringify(gameData));
 
     // Append the Game Over div to the body
     document.body.appendChild(gameOverDiv);
@@ -182,15 +225,14 @@ function displayPlayer() {
 
 
 function displayUI() {
-    // draw health bar background
-    fill(0, 0, 0, 200); // transparent background
-    rect(10, 10, 105, 30, 5);
-
     // draw red rectangles representing health bar
+    fill(0, 0, 0, 200);
+    rect(10, 10, startingPlayerHP * 20 + 5, 30, 5);
     for (let i = 0; i < playerHP; i++) {
         fill(255, 0, 0);
         rect(15 + i * 20, 15, 15, 20);
     }
+    // draw health bar background
 
     // display round number
     textSize(16);
@@ -451,6 +493,9 @@ class Enemy {
         let playerPos = createVector(scrollX + width / 2, scrollY + height / 2); // player vecotr
         if (p5.Vector.dist(this.position, playerPos) < 150) { // if player is close
             this.attackMode = 1; // switch to attack mode
+            if (!zombieSound.isPlaying()) {
+                zombieSound.play()
+            }
         }
         else {
             this.attackMode = 0; // walking mode
@@ -460,6 +505,7 @@ class Enemy {
             playerHP = max(0, playerHP - 1); // reduce playerHP 
             this.hitTimer = 0; // reset hittimer
             hitEffectAlpha = 150; // set alpha to 150, to alert that player has been hit
+            playerHitSound.play()
         }
     }
     update() {
