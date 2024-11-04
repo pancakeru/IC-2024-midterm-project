@@ -20,6 +20,7 @@ body {
     justify-items: center;
     align-self: center;
     display: flex;
+    border-radius: 10%;
 }
 
 iframe {
@@ -36,6 +37,7 @@ iframe {
 .inv-item {
     width: 20%;
     height: 70%;
-    background-color: red;
+    background-color: white;
     margin: 10px;
+    border-radius: 10%;
 }

@@ -14,14 +14,71 @@
     <div id="game" class="item">
         <iframe src="gamesketch.html" width="600px" height="600px" scrolling="no"></iframe>
         <div id="inventory" class="item">
-            <div class="inv-item"></div>
-            <div class="inv-item"></div>
-            <div class="inv-item"></div>
-            <div class="inv-item"></div>
+            <div class="inv-item" id="hats"></div>
+            <div class="inv-item" id="armor"></div>
+            <div class="inv-item" id="boots"></div>
+            <div class="inv-item" id="weapon"></div>
         </div>
     </div>
 
 </body>
+
+
+<script>
+    const characterData = JSON.parse(localStorage.getItem("characterData"));
+
+    if (characterData && characterData.hats) {
+        const hat = document.getElementById("hats");
+        
+        const img = document.createElement("img");
+        img.src = characterData.hats; 
+        img.alt = "Hat Image"; 
+        img.style.width = "110px";
+        img.style.height = "110px";
+
+        const itemDiv = document.getElementById("hats"); 
+        itemDiv.appendChild(img);
+    } 
+
+    if (characterData && characterData.armor) {
+        const armor = document.getElementById("armor");
+        
+        const img = document.createElement("img");
+        img.src = characterData.armor; 
+        img.alt = "Armor Image"; 
+        img.style.width = "110px";
+        img.style.height = "110px";
+
+        const itemDiv = document.getElementById("armor"); 
+        itemDiv.appendChild(img);
+    } 
+
+    if (characterData && characterData.boots) {
+        const boots = document.getElementById("boots");
+        
+        const img = document.createElement("img");
+        img.src = characterData.boots; 
+        img.alt = "Boots Image"; 
+        img.style.width = "110px";
+        img.style.height = "110px";
+
+        const itemDiv = document.getElementById("boots"); 
+        itemDiv.appendChild(img);
+    } 
+
+    if (characterData && characterData.weapons) {
+        const weapon = document.getElementById("weapon");
+        
+        const img = document.createElement("img");
+        img.src = characterData.weapons; 
+        img.alt = "Weapon Image"; 
+        img.style.width = "110px";
+        img.style.height = "110px";
+
+        const itemDiv = document.getElementById("weapon"); 
+        itemDiv.appendChild(img);
+    } 
+</script>
 
 
 </html>
