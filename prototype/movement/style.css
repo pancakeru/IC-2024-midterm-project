@@ -6,16 +6,20 @@ body {
     justify-content: center;
     height: 100vh;
     display: flex;
+    background-image: url("assets/drawing-desert-with-landscape-background_889056-167277.avif");
+    background-size: cover;
+    
 }
 
 #inventory {
     background-color: gray;
     width: 600px;
-    height: 100px;
+    height: 150px;
     align-items: center;
     justify-content: center;
     justify-items: center;
     align-self: center;
+    display: flex;
 }
 
 iframe {
@@ -27,4 +31,11 @@ iframe {
     align-self: center;
     align-items: center;
     justify-content: center;
+}
+
+.inv-item {
+    width: 20%;
+    height: 70%;
+    background-color: red;
+    margin: 10px;
 }
