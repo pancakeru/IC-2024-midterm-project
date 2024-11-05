@@ -35,6 +35,7 @@ let zombieSound;
 let bulletSound;
 let gameOverSound;
 let playerHitSound;
+let zombieDamage = 1;
 let gameData = JSON.parse(localStorage.getItem("gameData")) || {};
 let stats = gameData.stats || {};
 let localDamage = stats.stealth;
@@ -359,6 +360,12 @@ function startNewWave() {
         enemies.push(new Enemy());
     }
     waveNumber++; // increment wave number
+    if (waveNumber % 5 == 0) {
+        zombieHealth += 2;
+    }
+    if (waveNumber % 7 == 0) {
+        zombieDamage += 1;
+    }
 }
 function updateScroll() {
     let moveSpeed = bootSpeed;
@@ -526,7 +533,7 @@ class Enemy {
         }
         this.hitTimer++; // hit timer
         if (p5.Vector.dist(this.position, playerPos) < 35 && this.hitTimer > 120) { // if player is on enemy and hit timer is greater than 120
-            playerHP = max(0, playerHP - 1); // reduce playerHP 
+            playerHP = max(0, playerHP - zombieDamage); // reduce playerHP 
             this.hitTimer = 0; // reset hittimer
             hitEffectAlpha = 150; // set alpha to 150, to alert that player has been hit
             playerHitSound.play()
