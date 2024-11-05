@@ -42,6 +42,8 @@ function preload() {
   weaponsArr[4] = loadImage("./images/weapons/USI_full.png");
 }
 
+// AI help taken to name the items and categories
+
 function loadItemsFromSpriteSheet() {
   hats = [
     {
@@ -232,8 +234,13 @@ function setup() {
   const containerWidth = characterContainer.offsetWidth;
   const containerHeight = characterContainer.offsetHeight;
 
+  canvas = createCanvas(containerWidth -110, containerHeight );
 
+<<<<<<< HEAD
+  // AI help taken to layer the canvas on top of the character container
+=======
   canvas = createCanvas(containerWidth - 100, containerHeight);
+>>>>>>> bb37e77fd99b80eef030555d2ae22131dad1ca0f
   canvas.parent('characterContainer');
   canvas.position(0, 0);
   canvas.style('position', 'absolute');
@@ -256,15 +263,15 @@ function setup() {
   );
 
   bootsArea = new ClickAreas(
-    width / 4 + 150,
-    height / 2 + 235,
-    245,
-    125,
+    width / 4 + 140,
+    height / 2 + 230,
+    210,
+    130,
     "boots"
   );
   weaponArea = new ClickAreas(
-    width / 4 + 190,
-    height / 2 + 70,
+    width / 4 + 200,
+    height / 2 + 50,
     150,
     200,
     "weapons"
@@ -349,6 +356,10 @@ function extractItem(col, row) {
 function displayStore() {
   const itemsContainer = document.getElementById("itemsContainer");
   const categoryNameDisplay = document.getElementById("categoryName");
+<<<<<<< HEAD
+  itemsContainer.innerHTML = ""; 
+  categoryNameDisplay.textContent = capitalize(selectedCategory); 
+=======
 
   if (!itemsContainer || !categoryNameDisplay) {
     console.error("Error: Required DOM elements not found.");
@@ -357,6 +368,7 @@ function displayStore() {
 
   itemsContainer.innerHTML = "";
   categoryNameDisplay.textContent = capitalize(selectedCategory);
+>>>>>>> bb37e77fd99b80eef030555d2ae22131dad1ca0f
 
   let itemsArray = getItemsForCategory(selectedCategory);
   itemsArray.forEach((item) => {
@@ -391,7 +403,6 @@ function displayStore() {
     itemCost.classList.add("item-cost");
     itemCost.textContent = `Cost: $${item.cost}`;
 
-    // Create the button for "Buy", "Equip" or "Equipped" based on item state
     const actionButton = document.createElement("button");
     actionButton.classList.add("buy-button");
     actionButton.setAttribute("data-item-name", item.name);
@@ -420,6 +431,7 @@ function displayStore() {
   });
 }
 
+// Code taken from AI to update the bars proportionally to the stats
 function updateStatsBars() {
   document.getElementById("stealthBar").querySelector(".fill").style.width =
     (stats.stealth / MAX_STATS.stealth) * 100 + "%";
@@ -442,8 +454,8 @@ function buyItem(item) {
 
   if (currency >= item.cost) {
     currency -= item.cost;
-    item.purchased = true; // Mark as purchased
-    item.equipped = true; // Equip upon purchase
+    item.purchased = true; 
+    item.equipped = true; 
 
     document.getElementById("currencyAmount").textContent = currency;
     alert(`You bought ${item.name} for $${item.cost}!`);
@@ -545,11 +557,9 @@ function addToInventory(item, category) {
       previousItem.remove();
     }
 
-    // Create a new div for the item
     const itemDiv = document.createElement("div");
     itemDiv.classList.add("inventory-item");
 
-    // Add item image to inventory
     const img = document.createElement("img");
     img.src = item.img.canvas ? item.img.canvas.toDataURL() : item.img.src;
     img.alt = item.name;
@@ -562,15 +572,14 @@ function addToInventory(item, category) {
     }
     itemDiv.appendChild(img);
 
-    // Add item name
+
     const itemName = document.createElement("p");
     itemName.textContent = item.name;
     itemDiv.appendChild(itemName);
 
-    // Set up the click event to equip the item on the soldier
     itemDiv.onclick = () => equipItemOnSoldier(item, category);
 
-    // Append the new item div to the category container
+ 
     categoryDiv.appendChild(itemDiv);
     SaveCharData();
   }
@@ -632,7 +641,6 @@ function displayInventory() {
     });
 }
 
-// Create and display navigation arrows
 function displayNavigationArrows() {
   const container = document.getElementById("navigationContainer");
   container.innerHTML = "";
@@ -651,6 +659,7 @@ function displayNavigationArrows() {
   container.appendChild(rightArrow);
 }
 
+// AI suggestion: Add a function to capitalize category names
 // Capitalize category names
 function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -732,16 +741,16 @@ class ClickAreas {
     // }
   }
 
+// This function was written with the help of AI to update the image of the character and store it in local storage
+
   updateImage(img) {
     if (img instanceof p5.Image) {
-      // Convert p5.Image to base64 string
       const base64String = img.canvas.toDataURL();
-      characterData[this.type] = base64String; // Save base64 for localStorage
-      this.img = img; // Keep the p5.Image object for display in p5.js
+      characterData[this.type] = base64String; 
+      this.img = img;
     } else if (typeof img === "string") {
-      // Load from URL or base64 string
       this.img = loadImage(img);
-      characterData[this.type] = img; // Save the URL/base64 string to character data
+      characterData[this.type] = img; 
     } else {
       console.warn("Unrecognized image type:", img);
     }
