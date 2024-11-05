@@ -12,8 +12,8 @@ let inventory = [];
 //starting stats
 let stats = {
   stealth: 0,
-  defense: 0, 
-  shootingSpeed: 0, 
+  defense: 0,
+  shootingSpeed: 0,
   speed: 0,
 };
 let characterData = {
@@ -231,18 +231,22 @@ function loadItemsFromSpriteSheet() {
 
 function setup() {
   const characterContainer = document.getElementById('characterContainer');
-  const containerWidth = characterContainer.offsetWidth ;
+  const containerWidth = characterContainer.offsetWidth;
   const containerHeight = characterContainer.offsetHeight;
 
   canvas = createCanvas(containerWidth -110, containerHeight );
 
+<<<<<<< HEAD
   // AI help taken to layer the canvas on top of the character container
+=======
+  canvas = createCanvas(containerWidth - 100, containerHeight);
+>>>>>>> bb37e77fd99b80eef030555d2ae22131dad1ca0f
   canvas.parent('characterContainer');
   canvas.position(0, 0);
   canvas.style('position', 'absolute');
   canvas.style('top', '0');
   canvas.style('left', '0');
-  canvas.style('z-index', '2'); 
+  canvas.style('z-index', '2');
 
 
   loadItemsFromSpriteSheet();
@@ -251,7 +255,7 @@ function setup() {
   hatArea = new ClickAreas(width / 4 + 130, height / 2 - 250, 150, 130, "hats");
 
   armorArea = new ClickAreas(
-    width / 4 +125,
+    width / 4 + 125,
     height / 2 - 110,
     240,
     230,
@@ -325,7 +329,7 @@ function switchCategory(direction) {
 
 // Max stats for each attribute
 const MAX_STATS = {
-  stealth: 100,
+  stealth: 90,
   defense: 100,
   shootingSpeed: 100,
   speed: 100,
@@ -352,8 +356,19 @@ function extractItem(col, row) {
 function displayStore() {
   const itemsContainer = document.getElementById("itemsContainer");
   const categoryNameDisplay = document.getElementById("categoryName");
+<<<<<<< HEAD
   itemsContainer.innerHTML = ""; 
   categoryNameDisplay.textContent = capitalize(selectedCategory); 
+=======
+
+  if (!itemsContainer || !categoryNameDisplay) {
+    console.error("Error: Required DOM elements not found.");
+    return;
+  }
+
+  itemsContainer.innerHTML = "";
+  categoryNameDisplay.textContent = capitalize(selectedCategory);
+>>>>>>> bb37e77fd99b80eef030555d2ae22131dad1ca0f
 
   let itemsArray = getItemsForCategory(selectedCategory);
   itemsArray.forEach((item) => {
@@ -445,11 +460,15 @@ function buyItem(item) {
     document.getElementById("currencyAmount").textContent = currency;
     alert(`You bought ${item.name} for $${item.cost}!`);
 
-    // Update stats
-    if (item.stealth) stats.stealth += item.stealth;
-    if (item.defense) stats.defense += item.defense;
-    if (item.shootingSpeed) stats.shootingSpeed += item.shootingSpeed;
-    if (item.speed) stats.speed += item.speed;
+    if (selectedCategory === "hats" && item.stealth) {
+      stats.shootingSpeed += item.stealth;
+    } else if (selectedCategory === "armor" && item.defense) {
+      stats.defense += item.defense;
+    } else if (selectedCategory === "weapons" && item.damage) {
+      stats.stealth += item.damage;
+    } else if (selectedCategory === "boots" && item.speed) {
+      stats.speed += item.speed;
+    }
 
     equipItem(item, selectedCategory);
     updateStatsBars();
@@ -532,7 +551,7 @@ function addToInventory(item, category) {
   console.log(`Category div found: ${categoryDiv ? "Yes" : "No"}`);
 
   if (categoryDiv) {
-    
+
     const previousItem = categoryDiv.querySelector(".inventory-item");
     if (previousItem) {
       previousItem.remove();
@@ -579,7 +598,7 @@ function displayInventory() {
   weaponInventoryItemsDiv.innerHTML = " ";
   bootsInventoryItemsDiv.innerHTML = " ";
 
-  
+
   const allItems = [...hats, ...armor, ...weapons, ...boots];
 
   allItems
@@ -661,12 +680,12 @@ function getItemsForCategory(category) {
 }
 function equipItemOnSoldier(item, category) {
   selectedImg = item.img;
-  characterData[category] = item.img; 
+  characterData[category] = item.img;
 
   // Update the image on the corresponding ClickArea
   clickBoxes.forEach((box) => {
     if (box.type === category) {
-      box.updateImage(item.img); 
+      box.updateImage(item.img);
     }
   });
 
@@ -712,7 +731,7 @@ class ClickAreas {
       }
       image(this.img, 0, 0, this.width, this.height);
       pop();
-    } 
+    }
     // else {
     //   // Draw outline if no image
     //   fill(255, 0, 0, 100); // Semi-transparent for visibility

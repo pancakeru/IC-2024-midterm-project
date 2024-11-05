@@ -39,19 +39,19 @@ let gameData = JSON.parse(localStorage.getItem("gameData")) || {};
 let stats = gameData.stats || {};
 let localDamage = stats.stealth;
 if (localDamage) {
-    AD += (localDamage / 20)
+    AD += (localDamage / 10)
 }
 let localHealth = stats.defense;
 if (localHealth) {
-    playerHP += (localHealth / 10)
+    playerHP += Math.ceil(localHealth / 15)
 }
 let localFireSpeed = stats.shootingSpeed;
 if (localFireSpeed) {
-    fireSpeed += (localFireSpeed / 10)
+    fireSpeed += (localFireSpeed / 20)
 }
 let localSpeed = stats.speed
 if (localSpeed) {
-    bootSpeed += (localSpeed / 40)
+    bootSpeed += (localSpeed / 90)
 }
 let startingPlayerHP = playerHP
 function preload() {
@@ -327,6 +327,30 @@ function perlinBG() {
             row.push(node); // push node to row
         }
         grid.push(row); // push row to grid
+    }
+    // loop top and lower border and make all walkable dark rocks
+    for (let i = 0; i < grid.length; i++) {
+        grid[0][i].walkable = true;
+        grid[0][i].sx = 40;
+        grid[0][i].sy = 0;
+        perlinGraphics.image(tileset, i * tileSize, 0, tileSize, tileSize, 40, 0, tileSize, tileSize);
+
+        grid[grid.length - 1][i].walkable = true;
+        grid[grid.length - 1][i].sx = 40;
+        grid[grid.length - 1][i].sy = 0;
+        perlinGraphics.image(tileset, i * tileSize, (grid.length - 1) * tileSize, tileSize, tileSize, 40, 0, tileSize, tileSize);
+    }
+    // loop left and right border and make all walkable dark rock
+    for (let i = 1; i < grid.length - 1; i++) {
+        grid[i][0].walkable = true;
+        grid[i][0].sx = 40;
+        grid[i][0].sy = 0;
+        perlinGraphics.image(tileset, 0, i * tileSize, tileSize, tileSize, 40, 0, tileSize, tileSize);
+
+        grid[i][grid[i].length - 1].walkable = true;
+        grid[i][grid[i].length - 1].sx = 40;
+        grid[i][grid[i].length - 1].sy = 0;
+        perlinGraphics.image(tileset, (grid[i].length - 1) * tileSize, i * tileSize, tileSize, tileSize, 40, 0, tileSize, tileSize);
     }
 }
 
