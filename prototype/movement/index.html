@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>movement prototype</title>
+    <title>Main Game</title>
 
     <link rel="stylesheet" href="style.css">
 
@@ -13,7 +13,18 @@
 </head>
 
 <body>
-
+    <div id="sidebar">
+        <h2>Controls</h2>
+        <ul id="controlsList">
+            <li><span class="control-key">W</span> Move Up</li>
+            <li><span class="control-key">S</span> Move Down</li>
+            <li><span class="control-key">A</span> Move Left</li>
+            <li><span class="control-key">D</span> Move Right</li>
+            <li><span class="control-key">Left Click</span> Attack</li>
+            <li><span class="control-key">i</span> Toggle Auto Fire</li>
+            <li><span class="control-key">Mouse</span> Aim</li>
+        </ul>
+    </div>
     <div id="game" class="item">
         <iframe src="gamesketch.html" width="600px" height="600px" scrolling="no"></iframe>
         <div id="inventory" class="item">
