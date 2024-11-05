@@ -34,7 +34,7 @@ function LoadCharData() {
 
     // AI suggestion: Add a check to see if the currency is a number
     // Code written by chatGPT
-    currency = data.currency !== undefined ? data.currency : 500;
+    currency = data.currency !== undefined ? data.currency : 50;
 
     // AI help taken it iterate over the arrays and find saved item and restore item states
     if (data.itemsData) {
@@ -54,7 +54,7 @@ function LoadCharData() {
   } else {
     // console.log("No saved data found. Initializing with default values.");
     selectedCategory = "hats";
-    currency = 500;
+    currency = 50;
     SaveCharData();
   }
 }
