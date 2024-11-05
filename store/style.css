@@ -30,8 +30,8 @@ h1 {
 }
 
 #characterContainer {
-  width: 470px;  
-  height: 650px; 
+  width: 420px;  
+  height: 600px; 
   position: relative;
 }
 
@@ -179,7 +179,6 @@ iframe {
   cursor: pointer;
   display: inline-flex;
   fill: currentcolor;
-  font-family: "Google Sans", Roboto, Arial, sans-serif;
   font-size: 14px;
   font-weight: 500;
   height: 32px;
