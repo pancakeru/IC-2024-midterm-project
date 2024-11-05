@@ -39,19 +39,19 @@ let gameData = JSON.parse(localStorage.getItem("gameData")) || {};
 let stats = gameData.stats || {};
 let localDamage = stats.stealth;
 if (localDamage) {
-    AD += (localDamage / 20)
+    AD += (localDamage / 10)
 }
 let localHealth = stats.defense;
 if (localHealth) {
-    playerHP += (localHealth / 10)
+    playerHP += Math.ceil(localHealth / 15)
 }
 let localFireSpeed = stats.shootingSpeed;
 if (localFireSpeed) {
-    fireSpeed += (localFireSpeed / 10)
+    fireSpeed += (localFireSpeed / 20)
 }
 let localSpeed = stats.speed
 if (localSpeed) {
-    bootSpeed += (localSpeed / 40)
+    bootSpeed += (localSpeed / 80)
 }
 let startingPlayerHP = playerHP
 function preload() {

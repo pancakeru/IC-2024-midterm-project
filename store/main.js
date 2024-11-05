@@ -322,7 +322,7 @@ function switchCategory(direction) {
 
 // Max stats for each attribute
 const MAX_STATS = {
-  stealth: 100,
+  stealth: 90,
   defense: 100,
   shootingSpeed: 100,
   speed: 100,
@@ -449,13 +449,13 @@ function buyItem(item) {
     alert(`You bought ${item.name} for $${item.cost}!`);
 
     if (selectedCategory === "hats" && item.stealth) {
-      stats.shootingSpeed = item.stealth;
+      stats.shootingSpeed += item.stealth;
     } else if (selectedCategory === "armor" && item.defense) {
-      stats.defense = item.defense;
+      stats.defense += item.defense;
     } else if (selectedCategory === "weapons" && item.damage) {
-      stats.stealth = item.damage;
+      stats.stealth += item.damage;
     } else if (selectedCategory === "boots" && item.speed) {
-      stats.speed = item.speed;
+      stats.speed += item.speed;
     }
 
     equipItem(item, selectedCategory);
@@ -477,87 +477,22 @@ function buyItem(item) {
 }
 
 function equipItem(item, category) {
-  // Remove stats of any previously equipped item in this category
-  resetStatsForCategory(category);
+  deselectPreviousItem(category);
 
-  // Equip the new item
   item.equipped = true;
-  characterData[category] = {
-    id: item.id,
-    img: item.img.canvas ? item.img.canvas.toDataURL() : item.img.src,
-    stats: {
-      stealth: item.stealth || 0,
-      defense: item.defense || 0,
-      shootingSpeed: item.shootingSpeed || 0,
-      speed: item.speed || 0,
-    },
-  };
+  clickBoxes.forEach((box) => {
+    if (box.type === category) {
+      box.updateImage(
+        item.img.canvas ? item.img.canvas.toDataURL() : item.img.src
+      );
+    }
+  });
 
-  // Update stats based on the new item
-  applyItemStats(item, category);
-
-  // Update UI and save changes
-  updateStatsBars();
-  updateEquippedButton(item);
+  characterData[category] = item.img.canvas
+    ? item.img.canvas.toDataURL()
+    : item.img.src;
   SaveCharData();
   displayInventory();
-}
-
-// Reset stats and unequip any previously equipped item in the category
-function resetStatsForCategory(category) {
-  if (characterData[category]) {
-    const currentItem = characterData[category];
-    stats.stealth -= currentItem.stats.stealth || 0;
-    stats.defense -= currentItem.stats.defense || 0;
-    stats.shootingSpeed -= currentItem.stats.shootingSpeed || 0;
-    stats.speed -= currentItem.stats.speed || 0;
-  }
-  characterData[category] = null;
-}
-
-// Apply item stats to the character's overall stats
-function applyItemStats(item, category) {
-  stats.stealth += item.damage || 0;
-  stats.defense += item.defense || 0;
-  stats.shootingSpeed += item.shootingSpeed || 0;
-  stats.speed += item.speed || 0;
-}
-
-// Update button UI for the equipped item
-function updateEquippedButton(item) {
-  const equipButton = document.querySelector(`button[data-item-name="${item.name}"]`);
-  if (equipButton) {
-    equipButton.textContent = "Equipped";
-    equipButton.disabled = true;
-    equipButton.classList.add("equipped");
-  }
-}
-
-// Function to reset button UI for unequipped items
-function resetEquipButton(item) {
-  const equipButton = document.querySelector(`button[data-item-name="${item.name}"]`);
-  if (equipButton) {
-    equipButton.textContent = "Equip";
-    equipButton.disabled = false;
-    equipButton.classList.remove("equipped");
-  }
-}
-
-// Update stats bars based on current stats
-function updateStatsBars() {
-  document.getElementById("stealthBar").querySelector(".fill").style.width =
-    (stats.stealth / MAX_STATS.stealth) * 100 + "%";
-  document.getElementById("defenseBar").querySelector(".fill").style.width =
-    (stats.defense / MAX_STATS.defense) * 100 + "%";
-  document.getElementById("shootingSpeedBar").querySelector(".fill").style.width =
-    (stats.shootingSpeed / MAX_STATS.shootingSpeed) * 100 + "%";
-  document.getElementById("speedBar").querySelector(".fill").style.width =
-    (stats.speed / MAX_STATS.speed) * 100 + "%";
-}
-
-// Save character data to local storage
-function SaveCharData() {
-  localStorage.setItem("characterData", JSON.stringify(characterData));
 }
 
 function deselectPreviousItem(category) {
