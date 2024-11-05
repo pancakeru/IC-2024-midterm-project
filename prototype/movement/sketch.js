@@ -51,7 +51,7 @@ if (localFireSpeed) {
 }
 let localSpeed = stats.speed
 if (localSpeed) {
-    bootSpeed += (localSpeed / 80)
+    bootSpeed += (localSpeed / 90)
 }
 let startingPlayerHP = playerHP
 function preload() {
