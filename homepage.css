@@ -4,6 +4,11 @@
     src: url("titlefont/thedeadsaloon-Regular.ttf");
 }
 
+@font-face{
+  font-family: body-font;
+  src: url("titlefont/kirsty rg.otf");
+}
+
 h1 {
     text-align: center;
     margin-top: 5%;
@@ -13,8 +18,8 @@ h1 {
 
 p {
     text-align: center;
-    font-size: 40px;
-    font-family: title-font;
+    font-size: 24px;
+    font-family: body-font;
 }
 
 body {
@@ -43,7 +48,10 @@ body {
 
 #parent {
     position: relative;
-    display: inline-block;
+    display: block; 
+    width: fit-content; 
+    margin: 0 auto; 
+    text-align: center;
 }
 
 #parent:hover #board {
@@ -52,4 +60,28 @@ body {
 
 #parent:hover #playText {
     color: yellow;
+}
+
+.top {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+    text-align: center;
+  font-family: body-font;
+    
+}
+
+.top img {
+    width: 7%; 
+    height: 7%; 
+    margin-right: 10px; 
+  vertical-align: middle;
+    
+}
+
+h2 {
+    font-size: 16px;
+    font-weight: normal;
+    margin: 0;
 }
