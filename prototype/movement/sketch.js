@@ -328,6 +328,30 @@ function perlinBG() {
         }
         grid.push(row); // push row to grid
     }
+    // loop top and lower border and make all walkable dark rocks
+    for (let i = 0; i < grid.length; i++) {
+        grid[0][i].walkable = true;
+        grid[0][i].sx = 40;
+        grid[0][i].sy = 0;
+        perlinGraphics.image(tileset, i * tileSize, 0, tileSize, tileSize, 40, 0, tileSize, tileSize);
+
+        grid[grid.length - 1][i].walkable = true;
+        grid[grid.length - 1][i].sx = 40;
+        grid[grid.length - 1][i].sy = 0;
+        perlinGraphics.image(tileset, i * tileSize, (grid.length - 1) * tileSize, tileSize, tileSize, 40, 0, tileSize, tileSize);
+    }
+    // loop left and right border and make all walkable dark rock
+    for (let i = 1; i < grid.length - 1; i++) {
+        grid[i][0].walkable = true;
+        grid[i][0].sx = 40;
+        grid[i][0].sy = 0;
+        perlinGraphics.image(tileset, 0, i * tileSize, tileSize, tileSize, 40, 0, tileSize, tileSize);
+
+        grid[i][grid[i].length - 1].walkable = true;
+        grid[i][grid[i].length - 1].sx = 40;
+        grid[i][grid[i].length - 1].sy = 0;
+        perlinGraphics.image(tileset, (grid[i].length - 1) * tileSize, i * tileSize, tileSize, tileSize, 40, 0, tileSize, tileSize);
+    }
 }
 
 function startNewWave() {
