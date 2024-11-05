@@ -234,13 +234,9 @@ function setup() {
   const containerWidth = characterContainer.offsetWidth;
   const containerHeight = characterContainer.offsetHeight;
 
-  canvas = createCanvas(containerWidth -110, containerHeight );
+  canvas = createCanvas(containerWidth - 110, containerHeight);
 
-<<<<<<< HEAD
-  // AI help taken to layer the canvas on top of the character container
-=======
   canvas = createCanvas(containerWidth - 100, containerHeight);
->>>>>>> bb37e77fd99b80eef030555d2ae22131dad1ca0f
   canvas.parent('characterContainer');
   canvas.position(0, 0);
   canvas.style('position', 'absolute');
@@ -356,10 +352,6 @@ function extractItem(col, row) {
 function displayStore() {
   const itemsContainer = document.getElementById("itemsContainer");
   const categoryNameDisplay = document.getElementById("categoryName");
-<<<<<<< HEAD
-  itemsContainer.innerHTML = ""; 
-  categoryNameDisplay.textContent = capitalize(selectedCategory); 
-=======
 
   if (!itemsContainer || !categoryNameDisplay) {
     console.error("Error: Required DOM elements not found.");
@@ -368,7 +360,6 @@ function displayStore() {
 
   itemsContainer.innerHTML = "";
   categoryNameDisplay.textContent = capitalize(selectedCategory);
->>>>>>> bb37e77fd99b80eef030555d2ae22131dad1ca0f
 
   let itemsArray = getItemsForCategory(selectedCategory);
   itemsArray.forEach((item) => {
@@ -454,8 +445,8 @@ function buyItem(item) {
 
   if (currency >= item.cost) {
     currency -= item.cost;
-    item.purchased = true; 
-    item.equipped = true; 
+    item.purchased = true;
+    item.equipped = true;
 
     document.getElementById("currencyAmount").textContent = currency;
     alert(`You bought ${item.name} for $${item.cost}!`);
@@ -579,7 +570,7 @@ function addToInventory(item, category) {
 
     itemDiv.onclick = () => equipItemOnSoldier(item, category);
 
- 
+
     categoryDiv.appendChild(itemDiv);
     SaveCharData();
   }
@@ -741,16 +732,16 @@ class ClickAreas {
     // }
   }
 
-// This function was written with the help of AI to update the image of the character and store it in local storage
+  // This function was written with the help of AI to update the image of the character and store it in local storage
 
   updateImage(img) {
     if (img instanceof p5.Image) {
       const base64String = img.canvas.toDataURL();
-      characterData[this.type] = base64String; 
+      characterData[this.type] = base64String;
       this.img = img;
     } else if (typeof img === "string") {
       this.img = loadImage(img);
-      characterData[this.type] = img; 
+      characterData[this.type] = img;
     } else {
       console.warn("Unrecognized image type:", img);
     }
